@@ -22,4 +22,4 @@ assert info_SCANB.shape[1] + SCANB.shape[1] == merged_dataset.shape[1] + 1, logg
         "number of column is not correct"
     )
 
-merged_dataset.to_csv("/Users/gilayache/PycharmProjects/Final-project-feature-selection-in-gene-expression/data/processed/merged_dataset.py")
+merged_dataset.to_csv("/Users/gilayache/PycharmProjects/Final-project-feature-selection-in-gene-expression/data/processed/merged_dataset.csv")
