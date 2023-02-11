@@ -1,10 +1,16 @@
 import pandas as pd
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 
-sampleinfo_SCANB_t_path = "/Users/gilayache/PycharmProjects/Final-project-feature-selection-in-gene-expression/data/raw/sampleinfo_SCANB_t.csv"
-SCANB_path = "/Users/gilayache/PycharmProjects/Final-project-feature-selection-in-gene-expression/data/raw/SCANB.csv"
+# Open a file with relative paths
+file_dir = os.path.dirname(os.path.realpath(__file__))
+back_two_levels = os.path.join(file_dir, "..", "..")
+sampleinfo_SCANB_t_path = os.path.join(back_two_levels, "data", "raw/sampleinfo_SCANB_t.csv")
+SCANB_path = os.path.join(back_two_levels, "data", "raw/SCANB.csv")
+merged_dataset_path = os.path.join(back_two_levels, "data", "processed/merged_dataset.csv")
+
 # read the sampleinfo_SCANB_t
 info_SCANB = pd.read_csv(sampleinfo_SCANB_t_path).drop('Unnamed: 0', axis=1)
 # read the SCANB
@@ -22,4 +28,4 @@ assert info_SCANB.shape[1] + SCANB.shape[1] == merged_dataset.shape[1] + 1, logg
         "number of column is not correct"
     )
 
-merged_dataset.to_csv("/Users/gilayache/PycharmProjects/Final-project-feature-selection-in-gene-expression/data/processed/merged_dataset.csv")
+merged_dataset.to_csv(merged_dataset_path,index=False)
