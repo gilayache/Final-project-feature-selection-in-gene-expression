@@ -9,7 +9,7 @@ data = pd.read_csv('/Users/gilayache/PycharmProjects/Final-project-feature-selec
 
 # Preprocessing the data
 # need to change this one.#
-X = data.drop(['samplename', 'ER','PAM50'], axis=1) # Dropping irrelevant columns
+X = data.iloc[:, 1:-6]# Dropping irrelevant columns (keeping only the gene expression data)
 # X = X.fillna(X.mean()) # Handling missing values
 # X = pd.get_dummies(X) # Encoding categorical variables
 # need to change this
@@ -18,7 +18,7 @@ X = X.fillna(0)
 y = data['ER'] # The target variable
 
 # Split the dataset into training and testing datasets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=123)
 
 # Define the logistic regression model and fit it on the training dataset
 lr = LogisticRegression(max_iter=5000)
