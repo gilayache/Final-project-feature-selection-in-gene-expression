@@ -4,7 +4,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
 # Load the dataset
-data = pd.read_csv('../../data/processed/merged_dataset.csv')
+data = pd.read_csv('../../../data/processed/merged_dataset.csv')
 
 # Preprocessing the data
 X = data.iloc[:, 1:-6] # Dropping irrelevant columns (keeping only the gene expression data)

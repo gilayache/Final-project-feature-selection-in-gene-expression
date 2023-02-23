@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 
 #Load the dataset
-data = pd.read_csv('../../data/processed/merged_dataset.csv')
+data = pd.read_csv('../../../data/processed/merged_dataset.csv')
 # Preprocessing the data
 # need to change this one.#
 X = data.iloc[:, 1:-6]# Dropping irrelevant columns (keeping only the gene expression data)
