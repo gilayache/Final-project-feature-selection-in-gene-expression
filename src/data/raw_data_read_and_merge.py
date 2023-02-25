@@ -23,7 +23,7 @@ SCANB = SCANB.iloc[1:]
 SCANB = SCANB.rename(columns={'Unnamed: 0': 'samplename'})
 merged_dataset = SCANB.merge(info_SCANB, left_on='samplename', right_on='samplename')
 
-# check the number of column is correct
+# check the number of columns is correct
 assert info_SCANB.shape[1] + SCANB.shape[1] == merged_dataset.shape[1] + 1, logging.info(
         "number of column is not correct"
     )
