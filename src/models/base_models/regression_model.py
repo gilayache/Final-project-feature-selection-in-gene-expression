@@ -22,6 +22,6 @@ reg.fit(X_train, y_train)
 # Make predictions on the testing dataset
 y_pred = reg.predict(X_test)
 
-# Calculate the root mean squared error
-rmse = mean_squared_error(y_test, y_pred, squared=False)
-print('RMSE:', rmse)
+# Calculate the mean squared error
+mse = mean_squared_error(y_test, y_pred, squared=True)
+print('MSE:', mse)
