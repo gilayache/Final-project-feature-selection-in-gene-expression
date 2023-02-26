@@ -9,10 +9,10 @@ from sklearn.metrics import mean_squared_error
 data = pd.read_csv('../../data/processed/merged_dataset.csv')
 
 # Preprocessing the data
-X = data.iloc[:, 1:-6] # Dropping irrelevant columns (keeping only the gene expression data)
+X = data.iloc[:, 1:-6]  # Dropping irrelevant columns (keeping only the gene expression data)
 X = X.fillna(0)
 
-y = data['Lympho'] # The target variable
+y = data['Lympho']  # The target variable
 
 # Split the dataset into training and testing datasets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=123)
@@ -30,16 +30,20 @@ for alpha in alphas:
     y_pred = enet.predict(X_test)
     mse_scores.append(mean_squared_error(y_test, y_pred))
 
+    # Stop when the number of features becomes 0
+    if num_nonzero == 0:
+        break
+
 # Plot the number of features and MSE scores for different alpha values
 fig, ax1 = plt.subplots()
-ax1.plot(alphas, num_features, 'b-')
+ax1.plot(alphas[:len(num_features)], num_features, 'b-')
 ax1.set_xlabel('alpha')
 ax1.set_ylabel('Number of features', color='b')
 ax1.tick_params('y', colors='b')
 ax1.set_title('Elastic Net - Number of Features and MSE vs Alpha')
 
 ax2 = ax1.twinx()
-ax2.plot(alphas, mse_scores, 'r-')
+ax2.plot(alphas[:len(mse_scores)], mse_scores, 'r-')
 ax2.set_ylabel('MSE', color='r')
 ax2.tick_params('y', colors='r')
 
