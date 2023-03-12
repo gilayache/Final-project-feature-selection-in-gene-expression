@@ -113,8 +113,8 @@ def elastic_net_regression(data: DataFrame, viz: bool):
     # Print the MSE before and after Elastic Net
     y_pred_initial = np.mean(y_train)
     mse_initial = mean_squared_error(y_test, np.full_like(y_test, y_pred_initial))
-    print(f"MSE before Elastic Net: {mse_initial}")
-    print(f"MSE after Elastic Net: {mse}")
+    print(f"MSE before Elastic Net: {round(mse_initial,4)}")
+    print(f"MSE after Elastic Net: {round(mse,4)}")
 
     # Return the plot (if viz=True), the number of features, and the input data
     if viz:
