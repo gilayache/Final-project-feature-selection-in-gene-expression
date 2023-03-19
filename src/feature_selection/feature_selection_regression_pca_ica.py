@@ -39,7 +39,7 @@ def apply_pca(X, pca=None, plot_scree=True):
         X_pca = pca.fit_transform(X)
 
         if plot_scree:
-            plt.plot(np.arange(1, X.shape[1] + 1), np.cumsum(pca.explained_variance_ratio_))
+            plt.plot(np.arange(1, len(pca.explained_variance_ratio_) + 1), np.cumsum(pca.explained_variance_ratio_))
             plt.xlabel("Number of Components")
             plt.ylabel("Cumulative Explained Variance")
             plt.title("Scree Plot")
@@ -47,8 +47,7 @@ def apply_pca(X, pca=None, plot_scree=True):
     else:
         X_pca = pca.transform(X)
 
-    return X_pca, pca
-
+    return X_pca
 
 def apply_ica(X, ica=None):
     if ica is None:
@@ -56,7 +55,8 @@ def apply_ica(X, ica=None):
         X_ica = ica.fit_transform(X)
     else:
         X_ica = ica.transform(X)
-    return X_ica, ica
+    return X_ica
+
 
 
 def apply_ica_pca(X, ica=None, pca=None):
@@ -71,39 +71,38 @@ def apply_pca_ica(X, pca=None, ica=None):
 
 
 # Apply PCA only
-X_pca = apply_pca(X_train)
+X_pca, pca = apply_pca(X_train)
 # Apply ICA only
-X_ica = apply_ica(X_train)
+X_ica, ica = apply_ica(X_train)
 # Apply ICA followed by PCA
-X_ica_pca = apply_ica_pca(X_train)
+X_ica_pca, ica_pca_ica, pca_ica_pca = apply_ica_pca(X_train)
 # Apply PCA followed by ICA
-X_pca_ica = apply_pca_ica(X_train)
+X_pca_ica, pca_pca_ica, ica_pca_ica = apply_pca_ica(X_train)
+
 
 # Initialize the Linear Regression model
 lr = LinearRegression()
 
-# Fit and predict for each method
-lr.fit(X_pca, y_train)
-X_test_pca, _ = apply_pca(X_test, pca=pca, plot_scree=False)
+X_test_pca = apply_pca(X_test, pca=pca, plot_scree=False)
 y_pred_pca = lr.predict(X_test_pca)
 mse_pca = mean_squared_error(y_test, y_pred_pca)
 
 lr.fit(X_ica, y_train)
-X_test_ica, _ = apply_ica(X_test, ica=ica)
+X_test_ica = apply_ica(X_test, ica=ica)
 y_pred_ica = lr.predict(X_test_ica)
 mse_ica = mean_squared_error(y_test, y_pred_ica)
 
 # Fit and predict for ICA followed by PCA
 lr.fit(X_ica_pca, y_train)
-X_test_ica_pca, _, _ = apply_ica_pca(X_test, ica=ica, pca=pca)
+X_test_ica_pca, _ = apply_ica_pca(X_test, ica=ica_pca_ica, pca=pca_ica_pca)
 y_pred_ica_pca = lr.predict(X_test_ica_pca)
 mse_ica_pca = mean_squared_error(y_test, y_pred_ica_pca)
 
 # Fit and predict for PCA followed by ICA
 lr.fit(X_pca_ica, y_train)
-X_test_pca_ica, _, _ = apply_pca_ica(X_test, pca=pca, ica=ica)
-y_pred_pca_ica = lr.predict(X_test_pca_ica)
-mse_pca_ica = mean_squared_error(y_test, y_pred_pca_ica)
+X_test_pca_ica, _ = apply_pca_ica
+
+
 
 
 # Plot the number of features before and after reduction
@@ -127,3 +126,4 @@ print("MSE for PCA only: ", mse_pca)
 print("MSE for ICA only: ", mse_ica)
 print("MSE for ICA followed by PCA: ", mse_ica_pca)
 print("MSE for PCA followed by ICA: ", mse_pca_ica)
+
