@@ -89,6 +89,16 @@ X_test_ica, _ = apply_ica(X_test, n_components=n_components, ica=ica)
 
 y_pred_ica = lr.predict(X_test_ica)
 
+# Number of features before and after PCA and ICA
+num_features_before = X_train.shape[1]
+num_features_after_pca = X_train_pca.shape[1]
+num_features_after_ica = X_train_ica.shape[1]
+
+# Print the number of features before and after PCA and ICA
+print("Number of features before PCA or ICA: ", num_features_before)
+print("Number of features after PCA: ", num_features_after_pca)
+print("Number of features after ICA: ", num_features_after_ica)
+
 # Calculate the mean squared error after ICA
 mse_ica = mean_squared_error(y_test, y_pred_ica)
 
