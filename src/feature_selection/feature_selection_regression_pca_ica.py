@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA, FastICA
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
+from sklearn.decomposition import PCA, FastICA
 
 # Load the dataset
 data = pd.read_csv("../../data/processed/merged_dataset.csv")
@@ -25,17 +25,17 @@ X = X.fillna(0)
 # The target variable
 y = data["Lympho"]
 
-# Get the initial number of features
-initial_num_features = X.shape[1]
-
 # Splitting the data into training and testing datasets
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=123
 )
 
-def apply_pca(X, pca=None, plot_scree=True):
+# Initialize the Linear Regression model
+lr = LinearRegression()
+
+def apply_pca(X, explained_variance, pca=None, plot_scree=True):
     if pca is None:
-        pca = PCA()
+        pca = PCA(n_components=explained_variance)
         X_pca = pca.fit_transform(X)
 
         if plot_scree:
@@ -47,83 +47,53 @@ def apply_pca(X, pca=None, plot_scree=True):
     else:
         X_pca = pca.transform(X)
 
-    return X_pca
+    return X_pca, pca
 
-def apply_ica(X, ica=None):
+def apply_ica(X, n_components, ica=None):
     if ica is None:
-        ica = FastICA()
+        ica = FastICA(n_components=n_components)
         X_ica = ica.fit_transform(X)
     else:
         X_ica = ica.transform(X)
-    return X_ica
 
+    return X_ica, ica
 
+# Apply PCA with specified explained variance
+X_train_pca, pca = apply_pca(X_train, explained_variance=0.99) # pca parameter
 
-def apply_ica_pca(X, ica=None, pca=None):
-    X_ica, ica = apply_ica(X, ica=ica)
-    X_ica_pca, pca = apply_pca(X_ica, pca=pca, plot_scree=False)
-    return X_ica_pca, ica, pca
+# Fit the Linear Regression model on the PCA-transformed training dataset
+lr.fit(X_train_pca, y_train)
 
-def apply_pca_ica(X, pca=None, ica=None):
-    X_pca, pca = apply_pca(X, pca=pca, plot_scree=False)
-    X_pca_ica, ica = apply_ica(X_pca, ica=ica)
-    return X_pca_ica, pca, ica
+# Transform the test dataset using the previously fitted PCA object
+X_test_pca, _ = apply_pca(X_test, explained_variance=0.99, pca=pca, plot_scree=False) # pca parameter
 
-
-# Apply PCA only
-X_pca, pca = apply_pca(X_train)
-# Apply ICA only
-X_ica, ica = apply_ica(X_train)
-# Apply ICA followed by PCA
-X_ica_pca, ica_pca_ica, pca_ica_pca = apply_ica_pca(X_train)
-# Apply PCA followed by ICA
-X_pca_ica, pca_pca_ica, ica_pca_ica = apply_pca_ica(X_train)
-
-
-# Initialize the Linear Regression model
-lr = LinearRegression()
-
-X_test_pca = apply_pca(X_test, pca=pca, plot_scree=False)
+# Make predictions using the test dataset
 y_pred_pca = lr.predict(X_test_pca)
+
+# Calculate the mean squared error after PCA
 mse_pca = mean_squared_error(y_test, y_pred_pca)
 
-lr.fit(X_ica, y_train)
-X_test_ica = apply_ica(X_test, ica=ica)
+# Calculate the mean squared error before PCA using the naive model
+y_pred_naive = np.mean(y_train)
+mse_naive = mean_squared_error(y_test, np.full_like(y_test, y_pred_naive))
+
+# Apply ICA with specified number of components
+n_components = 500 # ica parameter
+X_train_ica, ica = apply_ica(X_train, n_components=n_components)
+
+# Fit the Linear Regression model on the ICA-transformed training dataset
+lr.fit(X_train_ica, y_train)
+
+# Transform the test dataset using the previously fitted ICA object
+X_test_ica, _ = apply_ica(X_test, n_components=n_components, ica=ica)
+
 y_pred_ica = lr.predict(X_test_ica)
+
+# Calculate the mean squared error after ICA
 mse_ica = mean_squared_error(y_test, y_pred_ica)
 
-# Fit and predict for ICA followed by PCA
-lr.fit(X_ica_pca, y_train)
-X_test_ica_pca, _ = apply_ica_pca(X_test, ica=ica_pca_ica, pca=pca_ica_pca)
-y_pred_ica_pca = lr.predict(X_test_ica_pca)
-mse_ica_pca = mean_squared_error(y_test, y_pred_ica_pca)
-
-# Fit and predict for PCA followed by ICA
-lr.fit(X_pca_ica, y_train)
-X_test_pca_ica, _ = apply_pca_ica
-
-
-
-
-# Plot the number of features before and after reduction
-methods = ["Initial", "PCA", "ICA", "ICA-PCA", "PCA-ICA"]
-num_features = [
-    initial_num_features,
-    X_pca.shape[1],
-    X_ica.shape[1],
-    X_ica_pca.shape[1],
-    X_pca_ica.shape[1],
-]
-
-plt.bar(methods, num_features)
-plt.xlabel("Method")
-plt.ylabel("Number of Features")
-plt.title("Number of Features Before and After Reduction")
-plt.show()
-
-# Print the MSE for each method
-print("MSE for PCA only: ", mse_pca)
-print("MSE for ICA only: ", mse_ica)
-print("MSE for ICA followed by PCA: ", mse_ica_pca)
-print("MSE for PCA followed by ICA: ", mse_pca_ica)
+# Print the MSE before and after applying PCA and ICA
+print("MSE before applying PCA or ICA (naive model): ", mse_naive)
+print("MSE after applying PCA: ", mse_pca)
+print("MSE after applying ICA: ", mse_ica)
 
