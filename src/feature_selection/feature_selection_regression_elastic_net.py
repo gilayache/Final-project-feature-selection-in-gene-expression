@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import ElasticNet
 from sklearn.metrics import mean_squared_error
 from pandas import DataFrame
+from sklearn.linear_model import LinearRegression
 
 
 def elastic_net_regression(data: DataFrame, viz: bool):
@@ -110,10 +111,14 @@ def elastic_net_regression(data: DataFrame, viz: bool):
     # Print the number of features after Elastic Net
     print(f"Number of features after Elastic Net: {len(best_feature_names)}")
 
-    # Print the MSE before and after Elastic Net
-    y_pred_initial = np.mean(y_train)
-    mse_initial = mean_squared_error(y_test, np.full_like(y_test, y_pred_initial))
-    print(f"MSE before Elastic Net (naive model): {round(mse_initial,4)}")
+    # Fit the Linear Regression model (without regularization)
+    lr = LinearRegression()
+    lr.fit(X_train, y_train)
+
+    # Calculate the mean squared error (MSE) of the Linear Regression model
+    mse_initial = mean_squared_error(y_test, lr.predict(X_test))
+
+    print(f"MSE before Elastic Net : {round(mse_initial,4)}")
     print(f"MSE after Elastic Net: {round(mse,4)}")
 
     # Return the plot (if viz=True), the number of features, and the input data
