@@ -73,9 +73,14 @@ y_pred_pca = lr.predict(X_test_pca)
 # Calculate the mean squared error after PCA
 mse_pca = mean_squared_error(y_test, y_pred_pca)
 
-# Calculate the mean squared error before PCA using the naive model
-y_pred_naive = np.mean(y_train)
-mse_naive = mean_squared_error(y_test, np.full_like(y_test, y_pred_naive))
+# Fit the Linear Regression model directly on the training dataset without PCA or ICA
+lr.fit(X_train, y_train)
+
+# Make predictions using the test dataset without PCA or ICA
+y_pred_no_transform = lr.predict(X_test)
+
+# Calculate the mean squared error before applying PCA or ICA using the Linear Regression model
+mse_no_transform = mean_squared_error(y_test, y_pred_no_transform)
 
 # Apply ICA with specified number of components
 n_components = 500 # ica parameter
@@ -86,7 +91,6 @@ lr.fit(X_train_ica, y_train)
 
 # Transform the test dataset using the previously fitted ICA object
 X_test_ica, _ = apply_ica(X_test, n_components=n_components, ica=ica)
-
 y_pred_ica = lr.predict(X_test_ica)
 
 # Number of features before and after PCA and ICA
@@ -103,7 +107,6 @@ print("Number of features after ICA: ", num_features_after_ica)
 mse_ica = mean_squared_error(y_test, y_pred_ica)
 
 # Print the MSE before and after applying PCA and ICA
-print("MSE before applying PCA or ICA (naive model): ", mse_naive)
-print("MSE after applying PCA: ", mse_pca)
-print("MSE after applying ICA: ", mse_ica)
-
+print("MSE before applying PCA or ICA: ", round(mse_no_transform,4))
+print("MSE after applying PCA: ", round(mse_pca,4))
+print("MSE after applying ICA: ", round(mse_ica,4))
