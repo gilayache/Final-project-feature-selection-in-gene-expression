@@ -7,7 +7,6 @@ from sklearn.metrics import mean_squared_error
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-from sklearn.model_selection import GridSearchCV
 from sklearn.base import BaseEstimator, TransformerMixin
 
 # Custom transformer
@@ -49,11 +48,6 @@ pipe = Pipeline([
     ('regressor', LinearRegression())
 ])
 
-# Set up hyperparameter search space for PCA
-param_grid = {
-    'dim_reduction__n_components': np.arange(1, 1100, 100),
-}
-
 # Load the dataset
 data = pd.read_csv("../../data/processed/merged_dataset.csv")
 # Dropping irrelevant columns (keeping only the gene expression data)
@@ -77,26 +71,6 @@ y = data["Lympho"]
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=123
 )
-
-# Perform GridSearchCV
-grid = GridSearchCV(pipe, param_grid, cv=5, scoring='neg_mean_squared_error')
-grid.fit(X_train, y_train)
-
-# Get the best parameters
-best_params = grid.best_params_
-print("Best parameters: ", best_params)
-
-# Apply the best PCA parameters to the pipeline
-best_pca_n_components = best_params['dim_reduction__n_components']
-pipe.set_params(dim_reduction__n_components=best_pca_n_components)
-
-# Train the pipeline with the best parameters
-pipe.fit(X_train, y_train)
-
-# Evaluate the model on the test set
-y_pred = pipe.predict(X_test)
-mse = mean_squared_error(y_test, y_pred)
-print("MSE after applying PCA with GridSearchCV: ", round(mse, 4))
 
 # Initialize the Linear Regression model
 lr = LinearRegression()
