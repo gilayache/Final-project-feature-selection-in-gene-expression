@@ -31,7 +31,8 @@ X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
 # Apply PCA with specified explained variance
-pca = PCA(n_components=0.99)
+explained_variance = 0.99
+pca = PCA(n_components=explained_variance)
 X_train_pca = pca.fit_transform(X_train_scaled)
 X_test_pca = pca.transform(X_test_scaled)
 
