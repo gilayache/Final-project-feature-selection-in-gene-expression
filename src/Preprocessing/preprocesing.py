@@ -1,40 +1,41 @@
 import pandas as pd
 
-def remove_constant_columns(X):
+class Preprocessing:
     """
-    remove constant columns from the given X
+    class for preprocessing methods
     """
+    def __init__(self, df: pd.DataFrame):
+        self.df = df
 
-    constant_cols = X.loc[:,X.apply(pd.Series.nunique) == 1].columns.to_list()
+    def remove_constant_columns(self):
+        """
+        remove constant columns from the given X
+        """
 
-    X.drop(columns=constant_cols, inplace=True)
+        constant_cols = self.df.loc[:, self.df.apply(pd.Series.nunique) == 1].columns.to_list()
 
-    return X
+        self.df.drop(columns=constant_cols, inplace=True)
 
-def remove_nan_columns(X):
-    """
-    remove columns that contain only nan values from the given df
-    """
+        return self.df
 
-    cols_with_nan = [col for col in X.columns if X[col].isna().any() > 0]
+    def remove_nan_columns(self):
+        """
+        remove columns that contain only nan values from the given df
+        """
 
-    for col in cols_with_nan:
-        if X[col].isna().sum() / X.shape[0] == 1:
-            X.drop(columns=col, inplace=True)
+        cols_with_nan = [col for col in self.df.columns if self.df[col].isna().any() > 0]
 
-    # todo: ask Gil if he likes it more like the above or below
-    # or in one line:
-    # [X.drop(columns=col, inplace=True) for col in cols_with_nan if X[col].isna().sum() / X.shape[0] == 1]
+        for col in cols_with_nan:
+            if self.df[col].isna().sum() / self.df.shape[0] == 1:
+                self.df.drop(columns=col, inplace=True)
 
-    return X
+    def split_x_y(df: pd.DataFrame, target_col: 'str'):
+        """
+        get a df and a target col and return X,y
+        from X we drop both the target col of regression & classification
+        :return: X, y
+        """
+        y = df[target_col]
+        X = df.drop(columns=['Lympho', 'ER'])
 
-def split_x_y(df: pd.DataFrame, taget_col: 'str'):
-    """
-    get a df and a target col and return X,y
-    from X we drop both the target col of regression & classification
-    :return: X, y
-    """
-    y = df[taget_col]
-    X = df.drop(columns=['Lympho', 'ER'])
-
-    return X, y
+        return X, y
