@@ -36,6 +36,8 @@ pca = PCA(n_components=explained_variance)
 X_train_pca = pca.fit_transform(X_train_scaled)
 X_test_pca = pca.transform(X_test_scaled)
 
+# todo: ask gil if all the below is analysis? if so, where are the selected columns? in x_train_pca? and what is the
+#  difference between x_train_pca and x_test_pca ?
 # Plot the scree plot
 plt.plot(np.arange(1, len(pca.explained_variance_ratio_) + 1), np.cumsum(pca.explained_variance_ratio_))
 plt.xlabel("Number of Components")

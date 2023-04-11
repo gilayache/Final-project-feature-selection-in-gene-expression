@@ -57,6 +57,7 @@ def elastic_net_regression(data: DataFrame, viz: bool):
         if num_nonzero == 0:
             break
 
+    # todo: remove the below into a plot class
     # If viz=True, plot the number of features and MSE scores for different alpha values
     if viz:
         fig, ax1 = plt.subplots()
@@ -105,6 +106,7 @@ def elastic_net_regression(data: DataFrame, viz: bool):
     # Get the names of the best features
     best_feature_names = X.columns[best_feature_indices]
 
+    # todo: remove the below into analysis class?
     # Print the starting number of features
     print(f"Number of features before Elastic Net: {X.shape[1]}")
 
