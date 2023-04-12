@@ -4,8 +4,9 @@ class Preprocessing:
     """
     class for preprocessing methods
     """
-    def __init__(self, df: pd.DataFrame):
+    def __init__(self, df: pd.DataFrame, target_col: str):
         self.df = df
+        self.target_col = target_col
 
     def remove_constant_columns(self):
         """
@@ -29,13 +30,13 @@ class Preprocessing:
             if self.df[col].isna().sum() / self.df.shape[0] == 1:
                 self.df.drop(columns=col, inplace=True)
 
-    def split_x_y(df: pd.DataFrame, target_col: 'str'):
+    def split_x_y(self, df: pd.DataFrame):
         """
         get a df and a target col and return X,y
         from X we drop both the target col of regression & classification
         :return: X, y
         """
-        y = df[target_col]
+        y = df[self.target_col]
         X = df.drop(columns=['Lympho', 'ER'])
 
         return X, y
