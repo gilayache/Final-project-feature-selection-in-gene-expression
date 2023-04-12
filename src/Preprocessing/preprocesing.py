@@ -4,31 +4,33 @@ class Preprocessing:
     """
     class for preprocessing methods
     """
-    def __init__(self, df: pd.DataFrame, target_col: str):
-        self.df = df
+    def __init__(self, target_col: str):
         self.target_col = target_col
 
-    def remove_constant_columns(self):
+    def remove_constant_columns(df):
         """
         remove constant columns from the given X
         """
 
-        constant_cols = self.df.loc[:, self.df.apply(pd.Series.nunique) == 1].columns.to_list()
+        constant_cols = df.loc[:, df.apply(pd.Series.nunique) == 1].columns.to_list()
 
-        self.df.drop(columns=constant_cols, inplace=True)
+        df.drop(columns=constant_cols, inplace=True)
 
-        return self.df
+        return df
 
-    def remove_nan_columns(self):
+    def remove_nan_columns(df):
         """
         remove columns that contain only nan values from the given df
         """
 
-        cols_with_nan = [col for col in self.df.columns if self.df[col].isna().any() > 0]
+        cols_with_nan = [col for col in df.columns if df[col].isna().any() > 0]
 
         for col in cols_with_nan:
-            if self.df[col].isna().sum() / self.df.shape[0] == 1:
-                self.df.drop(columns=col, inplace=True)
+            if df[col].isna().sum() / df.shape[0] == 1:
+                df.drop(columns=col, inplace=True)
+
+
+        return df
 
     def split_x_y(self, df: pd.DataFrame):
         """
