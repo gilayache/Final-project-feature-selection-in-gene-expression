@@ -31,21 +31,14 @@ class run_pipeline:
         """
 
         """
+        # todo: add load_params method
+        # todo: noa: write classes that include init, fit & transform methods  for  :
+        # Preprocessing
+        # Feature Selection (pca, mrmr, etc)
+        # Modeling (classification & regression models - implement what gil did)
+        # Evaluation
+        # + prepare a param file
 
-        data = self.load_data()
-        X, y = preprocesing.Preprocessing.split_x_y(self, data)
-
-        X = self.run_preprocessing_steps(X,y)
-
-        # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-        if self.run_type == 'train':
-            self.run_train()
-
-        elif self.run_type == 'inference':
-            self.run_inference(
-
-            )
         # todo: make the below work. if not working than change to run_preprocessing_steps and run_train & run_inference?
         # in order the below work we need to to call only classes with fit & transform implemented inside
         # pipeline = Pipeline(steps=[
@@ -54,6 +47,22 @@ class run_pipeline:
         #         ('select_features', feature_selection.FeatureSelection.mrmr(self))])
         #
         # pipeline.fit(X_train, y_train)
+        # data = self.load_data()
+
+        # X, y = preprocesing.Preprocessing.split_x_y(self, data)
+        #
+        # X = self.run_preprocessing_steps(X,y)
+        #
+        # # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        #
+        # if self.run_type == 'train':
+        #     self.run_train()
+        #
+        # elif self.run_type == 'inference':
+        #     self.run_inference(
+
+            # )
+
 
 
     def load_data(self):
