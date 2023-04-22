@@ -31,6 +31,13 @@ CATEGORICAL = pd.Index(np.setdiff1d(FEATURES, NUMERICAL))
 print(f"Categorical features: {', '.join(CATEGORICAL)}")
 
 
+# Find the columns with any missing values
+columns_with_missing_values = df.columns[df.isnull().any()]
+
+# Print the columns with missing values and the corresponding rows
+print(df[columns_with_missing_values])
+
+
 class Imputer(BaseEstimator, TransformerMixin):
     def __init__(self, num_features, cat_features, num_method='constant', cat_method='most_frequent', value='missing'):
         self.num_features = num_features
@@ -44,6 +51,8 @@ class Imputer(BaseEstimator, TransformerMixin):
             self.num_value = X[self.num_features].mean()
         elif self.num_method == 'most_frequent':
             self.num_value = X[self.num_features].mode().iloc[0]
+        elif self.num_method == 'constant':
+            self.num_value = self.value
 
         if self.cat_method == 'most_frequent':
             self.cat_value = X[self.cat_features].mode().iloc[0]
@@ -100,7 +109,6 @@ pipe = Pipeline([
     ('encoder', Encoder(CATEGORICAL)),
     ('model', LinearRegression())
 ])
-
 
 # Prepare the data
 X = df[FEATURES]
