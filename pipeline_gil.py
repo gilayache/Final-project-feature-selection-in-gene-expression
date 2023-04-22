@@ -32,21 +32,32 @@ print(f"Categorical features: {', '.join(CATEGORICAL)}")
 
 
 class Imputer(BaseEstimator, TransformerMixin):
-    def __init__(self, features, method='constant', value='missing'):
-        self.features = features
-        self.method = method
+    def __init__(self, num_features, cat_features, num_method='constant', cat_method='most_frequent', value='missing'):
+        self.num_features = num_features
+        self.cat_features = cat_features
+        self.num_method = num_method
+        self.cat_method = cat_method
         self.value = value
 
     def fit(self, X, y=None):
-        if self.method == 'mean':
-            self.value = X[self.features].mean()
-        elif self.method == 'most_frequent':
-            self.value = X[self.features].mode().iloc[0]
+        if self.num_method == 'mean':
+            self.num_value = X[self.num_features].mean()
+        elif self.num_method == 'most_frequent':
+            self.num_value = X[self.num_features].mode().iloc[0]
+
+        if self.cat_method == 'most_frequent':
+            self.cat_value = X[self.cat_features].mode().iloc[0]
+
         return self
 
     def transform(self, X):
         X_transformed = X.copy()
-        X_transformed[self.features] = X[self.features].fillna(self.value)
+        X_transformed[self.num_features] = X[self.num_features].fillna(self.num_value)
+        X_transformed[self.cat_features] = X[self.cat_features].fillna(self.cat_value)
+
+        print(f"Missing values in numerical features after imputation: {X_transformed[self.num_features].isna().sum().sum()}")
+        print(f"Missing values in categorical features after imputation: {X_transformed[self.cat_features].isna().sum().sum()}")
+
         return X_transformed
 
 
@@ -84,12 +95,12 @@ class Encoder(BaseEstimator, TransformerMixin):
 
 # Create the pipeline (including the model)
 pipe = Pipeline([
-    ('num_imputer', Imputer(NUMERICAL, method='mean')),
+    ('imputer', Imputer(NUMERICAL, CATEGORICAL, num_method='mean', cat_method='most_frequent')),
     ('scaler', Scaler(NUMERICAL)),
-    ('cat_imputer', Imputer(CATEGORICAL, method='most_frequent')),
     ('encoder', Encoder(CATEGORICAL)),
     ('model', LinearRegression())
 ])
+
 
 # Prepare the data
 X = df[FEATURES]
