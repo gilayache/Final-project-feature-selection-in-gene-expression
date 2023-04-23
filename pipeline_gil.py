@@ -21,18 +21,23 @@ set_config(display="diagram")
 df = pd.read_csv("data/processed/merged_dataset.csv")
 
 SEED = 42
-TARGET = ["ER", "Lympho","samplename"]
-FEATURES = df.columns.drop(TARGET)
+
+columns_to_remove = ["ER", "Lympho", "samplename"]
+
+# need to change this so the pipeline will apply this ('imputer', Imputer(NUMERICAL, CATEGORICAL, num_method='mean', cat_method='most_frequent')
+# and not just remove columns
+columns_with_missing_values = df.columns[df.isnull().any()]
+# Combining the lists using list comprehension
+all_columns_to_remove = [col for sublist in [columns_to_remove, columns_with_missing_values] for col in sublist]
+# Drop the columns
+FEATURES = df.columns.drop(all_columns_to_remove)
+
 
 NUMERICAL = df[FEATURES].select_dtypes('number').columns
 print(f"Numerical features: {', '.join(NUMERICAL)}")
 
 CATEGORICAL = pd.Index(np.setdiff1d(FEATURES, NUMERICAL))
 print(f"Categorical features: {', '.join(CATEGORICAL)}")
-
-
-# Find the columns with any missing values
-columns_with_missing_values = df.columns[df.isnull().any()]
 
 # Print the columns with missing values and the corresponding rows
 print(df[columns_with_missing_values])
@@ -69,7 +74,6 @@ class Imputer(BaseEstimator, TransformerMixin):
 
         return X_transformed
 
-
 class Scaler(BaseEstimator, TransformerMixin):
     def __init__(self, features):
         self.features = features
@@ -77,13 +81,13 @@ class Scaler(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         self.min = X[self.features].min()
         self.range = X[self.features].max() - self.min
+        self.range[self.range == 0] = 1  # Replace 0 with 1 to avoid division by zero
         return self
 
     def transform(self, X):
         X_transformed = X.copy()
         X_transformed[self.features] = (X[self.features] - self.min) / self.range
         return X_transformed
-
 
 class Encoder(BaseEstimator, TransformerMixin):
     def __init__(self, features, drop='first'):
@@ -112,15 +116,18 @@ pipe = Pipeline([
 
 # Prepare the data
 X = df[FEATURES]
+# Need to add it as a parameter
 y = df["Lympho"]
 
 # Perform the train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=SEED)
 
-# Fit the pipeline (including the model) using the training data
+# Fit the pipeline (including the model need to add the model as a parameter) using the training data
 pipe.fit(X_train, y_train)
 
+# Predict using the pipeline on the test data
+y_test_pred = pipe.predict(X_test)
+
 # Evaluate the pipeline on the test data
-y_pred = pipe.predict(X_test)
-mse = mean_squared_error(y_test, y_pred)
+mse = mean_squared_error(y_test, y_test_pred)
 print("Mean Squared Error:", mse)
