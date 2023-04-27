@@ -58,6 +58,10 @@ class run_pipeline:
         # Evaluation
         # + prepare a param file
 
+        # todo Noa --> ask gil first:
+        # 1. before we do pipe fit, we need to do some preprocessing steps (read data, split into x,y, train test split) -->
+        # lets look together at run_pipeline, i think we can combine them
+
         # todo: make the below work. if not working than change to run_preprocessing_steps and run_train & run_inference?
         # in order the below work we need to to call only classes with fit & transform implemented inside
         # pipeline = Pipeline(steps=[
