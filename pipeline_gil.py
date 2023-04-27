@@ -109,11 +109,10 @@ class RunPipeline:
         # Choose the model based on the model_type parameter columns_to_remove changed
         if self.model_type == 'regression':
             self.model = LinearRegression()
-            self.columns_to_remove = ["ER","samplename"]
+            self.columns_to_remove = ["Lympho","samplename"]
         elif self.model_type == 'classification':
             self.model = LogisticRegression()
-            self.columns_to_remove = ["Lympho", "samplename"]
-
+            self.columns_to_remove = ["ER", "samplename"]
         else:
             raise ValueError(f"Invalid model_type: {self.model_type}. Choose either 'regression' or 'classification'.")
 
