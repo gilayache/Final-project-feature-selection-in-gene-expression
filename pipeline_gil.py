@@ -94,52 +94,68 @@ class Encoder(BaseEstimator, TransformerMixin):
 def load_data(data_path):
     return pd.read_csv(data_path)
 
+class RunPipeline:
+    def __init__(self, run_type: str, target_col: str, input_path: str, output_path: str, model_type: str, test_size: float):
+        self.run_type = run_type ### why do we need this ???? ###
+        self.model_type = model_type
+        self.target_col = target_col
+        self.input_path = input_path or 'data/processed/merged_dataset.csv'
+        self.output_path = output_path
+        self.df = pd.DataFrame()
+        self.test_size = test_size
 
-# Running the pipeline
-data_path = "data/processed/merged_dataset.csv"
-model = LinearRegression()
-df = load_data(data_path)
-# Load data
-SEED = 42
-columns_to_remove = ["ER", "Lympho", "samplename"]
-# Drop the columns
-FEATURES = df.columns.drop(columns_to_remove)
+        # Define the additional parameters
+        self.SEED = 42
+        # Choose the model based on the model_type parameter columns_to_remove changed
+        if self.model_type == 'regression':
+            self.model = LinearRegression()
+            self.columns_to_remove = ["ER","samplename"]
+        elif self.model_type == 'classification':
+            self.model = LogisticRegression()
+            self.columns_to_remove = ["Lympho", "samplename"]
 
-NUMERICAL = df[FEATURES].select_dtypes("number").columns
-CATEGORICAL = pd.Index(np.setdiff1d(FEATURES, NUMERICAL))
+        else:
+            raise ValueError(f"Invalid model_type: {self.model_type}. Choose either 'regression' or 'classification'.")
 
-# Prepare the data
-X = df[FEATURES]
-y = df["Lympho"]
+    def run(self):
+        df = load_data(self.input_path)
+        FEATURES = df.columns.drop(self.columns_to_remove)
 
-# Perform the train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=SEED)
+        NUMERICAL = df[FEATURES].select_dtypes("number").columns
+        CATEGORICAL = pd.Index(np.setdiff1d(FEATURES, NUMERICAL))
 
-# Create the main pipeline (including the model)
-pipe = Pipeline([
-    ('column_dropper', FunctionTransformer(lambda X: X.drop(columns=[col for col in columns_to_remove if col in X.columns]))),
-    ('preprocessor', ColumnTransformer(transformers=[
-        ('num', Pipeline([
-            ('num_imputer', SimpleImputer(strategy='mean')),
-            ('scaler', MinMaxScaler())
-        ]), NUMERICAL),
-        ('cat', Pipeline([
-            ('cat_imputer', SimpleImputer(strategy='most_frequent')),
-            ('encoder', OneHotEncoder(drop='first'))
-        ]), CATEGORICAL)
-    ])),
-    ('model', model)
-])
+        X = df[FEATURES]
+        y = df[self.target_col]
 
-# Fit the pipeline using the training data
-pipe.fit(X_train, y_train)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.test_size, random_state=self.SEED)
 
-# Predict using the pipeline on the test data
-y_test_pred = pipe.predict(X_test)
+        pipe = Pipeline([
+            ('column_dropper',
+             FunctionTransformer(lambda X: X.drop(columns=[col for col in self.columns_to_remove if col in X.columns]))),
+            ('preprocessor', ColumnTransformer(transformers=[
+                ('num', Pipeline([
+                    ('num_imputer', SimpleImputer(strategy='mean')),
+                    ('scaler', MinMaxScaler())
+                ]), NUMERICAL),
+                ('cat', Pipeline([
+                    ('cat_imputer', SimpleImputer(strategy='most_frequent')),
+                    ('encoder', OneHotEncoder(drop='first'))
+                ]), CATEGORICAL)
+            ])),
+            ('model', self.model)
+        ])
 
-# Evaluate the pipeline on the test data
-mse = mean_squared_error(y_test, y_test_pred)
-print("Mean Squared Error:", mse)
+        pipe.fit(X_train, y_train)
 
+        y_test_pred = pipe.predict(X_test)
 
+        mse = mean_squared_error(y_test, y_test_pred)
+        print("Mean Squared Error:", mse)
+
+if __name__ == '__main__':
+    run_pipeline = RunPipeline(model_type='regression', target_col='Lympho',
+                               input_path='data/processed/merged_dataset.csv', output_path=None,
+                               run_type='train',
+                               test_size=0.2)
+    run_pipeline.run()
 
