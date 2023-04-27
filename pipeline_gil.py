@@ -26,6 +26,7 @@ SEED = 42
 
 columns_to_remove = ["ER", "Lympho", "samplename"]
 
+# todo: ask gil what does he mean by the below comment
 # need to change this so the pipeline will apply this ('imputer', Imputer(NUMERICAL, CATEGORICAL, num_method='mean', cat_method='most_frequent')
 # and not just remove columns
 columns_with_missing_values = df.columns[df.isnull().any()]
@@ -167,3 +168,6 @@ y_test_pred = pipe.predict(X_test)
 mse = mean_squared_error(y_test, y_test_pred)
 print("Mean Squared Error:", mse)
 
+# todo Noa --> ask gil first:
+# 1. before we do pipe fit, we need to do some preprocessing steps (read data, split into x,y, train test split) -->
+# lets look together at run_pipeline, i think we can combine them

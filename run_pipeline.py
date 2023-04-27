@@ -31,9 +31,28 @@ class run_pipeline:
         """
 
         """
+
+        # data = self.load_data()
+
+        # X, y = preprocesing.Preprocessing.split_x_y(self, data)
+        #
+        # X = self.run_preprocessing_steps(X,y)
+        #
+        # # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        #
+        # if self.run_type == 'train':
+        #     self.run_train()
+        #
+        # elif self.run_type == 'inference':
+        #     self.run_inference(
+
+        # todo: inside each method in the above we will use Gil's code of the pipeline and for each class we will write more methods
         # todo: add load_params method
         # todo: noa: write classes that include init, fit & transform methods  for  :
         # Preprocessing
+        # Imputation (handling missing values (removing them as well))
+        # Encoding (not only OHE)
+        # Scaling (standard, minmax, etc)
         # Feature Selection (pca, mrmr, etc)
         # Modeling (classification & regression models - implement what gil did)
         # Evaluation
