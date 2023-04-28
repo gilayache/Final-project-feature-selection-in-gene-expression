@@ -7,7 +7,7 @@ from sklearn.metrics import mean_squared_error
 
 class FeatureSelection:
     """
-
+    This class is responsible for feature selection. Each method returns the selected features
     """
 
     def __init__(self):

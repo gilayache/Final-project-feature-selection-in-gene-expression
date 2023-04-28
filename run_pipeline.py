@@ -40,11 +40,7 @@ class run_pipeline:
         #
         # # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         #
-        # if self.run_type == 'train':
-        #     self.run_train()
-        #
-        # elif self.run_type == 'inference':
-        #     self.run_inference(
+
 
         # todo: inside each method in the above we will use Gil's code of the pipeline and for each class we will write more methods
         # todo: add load_params method
@@ -62,6 +58,12 @@ class run_pipeline:
         # 1. before we do pipe fit, we need to do some preprocessing steps (read data, split into x,y, train test split) -->
         # lets look together at run_pipeline, i think we can combine them
 
+
+        # if self.run_type == 'train':
+        #     self.run_train()
+        #
+        # elif self.run_type == 'inference':
+        #     self.run_inference(
         # todo: make the below work. if not working than change to run_preprocessing_steps and run_train & run_inference?
         # in order the below work we need to to call only classes with fit & transform implemented inside
         # pipeline = Pipeline(steps=[
@@ -70,7 +72,7 @@ class run_pipeline:
         #         ('select_features', feature_selection.FeatureSelection.mrmr(self))])
         #
         # pipeline.fit(X_train, y_train)
-        # data = self.load_data()
+
 
         # X, y = preprocesing.Preprocessing.split_x_y(self, data)
         #
