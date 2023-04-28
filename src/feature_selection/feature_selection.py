@@ -90,44 +90,44 @@ class FeatureSelection:
 ########## for debugging only #########
 
 
-df = pd.read_csv(
-    "/Users/gilayache/PycharmProjects/Final-project-feature-selection-in-gene-expression/data/processed/merged_dataset.csv"
-)
-columns_to_remove = ["ER", "samplename"]
-FEATURES = df.columns.drop(columns_to_remove)
-
-from sklearn.preprocessing import LabelEncoder
-
-# encode the categorical features
-cat_columns = df.select_dtypes(include=["object"]).columns
-for column in cat_columns:
-    label_encoder = LabelEncoder()
-    df[column] = label_encoder.fit_transform(df[column])
-
-
-X = df[FEATURES]
-y = df["ER"]
-
-fs = FeatureSelection(
-    model_type="classification", K=10, random_state=42, alpha=0.01, l1_ratio=0.5, C=0.01
-)
-# mrmr
-# selected_feature_names = fs.mrmr(X, y)
+# df = pd.read_csv(
+#     "/Users/gilayache/PycharmProjects/Final-project-feature-selection-in-gene-expression/data/processed/merged_dataset.csv"
+# )
+# columns_to_remove = ["ER", "samplename"]
+# FEATURES = df.columns.drop(columns_to_remove)
+#
+# from sklearn.preprocessing import LabelEncoder
+#
+# # encode the categorical features
+# cat_columns = df.select_dtypes(include=["object"]).columns
+# for column in cat_columns:
+#     label_encoder = LabelEncoder()
+#     df[column] = label_encoder.fit_transform(df[column])
+#
+#
+# X = df[FEATURES]
+# y = df["ER"]
+#
+# fs = FeatureSelection(
+#     model_type="classification", K=10, random_state=42, alpha=0.01, l1_ratio=0.5, C=0.01
+# )
+# # mrmr
+# # selected_feature_names = fs.mrmr(X, y)
+# # print(selected_feature_names)
+# # print(len(selected_feature_names))
+#
+# # Elastic net
+# # Filling missing values with 0
+# # Dropping columns with all missing values
+# cols_with_nan = X.columns[X.isna().any()].tolist()
+# [
+#     X.drop(columns=col, inplace=True)
+#     for col in cols_with_nan
+#     if X[col].isna().sum() / X.shape[0] == 1
+# ]
+#
+# X = X.fillna(0)
+# selected_feature_names = fs.elastic_net(X, y)
+#
 # print(selected_feature_names)
 # print(len(selected_feature_names))
-
-# Elastic net
-# Filling missing values with 0
-# Dropping columns with all missing values
-cols_with_nan = X.columns[X.isna().any()].tolist()
-[
-    X.drop(columns=col, inplace=True)
-    for col in cols_with_nan
-    if X[col].isna().sum() / X.shape[0] == 1
-]
-
-X = X.fillna(0)
-selected_feature_names = fs.elastic_net(X, y)
-
-print(selected_feature_names)
-print(len(selected_feature_names))
