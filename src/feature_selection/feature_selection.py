@@ -2,76 +2,132 @@ import numpy as np
 import pandas as pd
 from mrmr import mrmr_classif, mrmr_regression
 from sklearn.linear_model import ElasticNet
-from sklearn.metrics import mean_squared_error
-
+from sklearn.linear_model import LogisticRegression
+from typing import List
 
 class FeatureSelection:
     """
     This class is responsible for feature selection. Each method returns the selected features
     """
 
-    def __init__(self):
-        pass
+    def __init__(
+        self,
+        model_type: str,
+        K: int,
+        random_state: int,
+        alpha: float,
+        l1_ratio: float,
+        C: float,
+    ):
+        """
+                :param model_type: `regression` or `classification`
+                :param K: num of cols to choose for mrmr.
+                :param random_state.
+                :param alpha: is a regularization parameter that controls the strength of the penalty applied to the coefficients for elastic net.
+        :       :param l1_ratio: controls the mix of L1 and L2 penalties in the Elastic Net regularization.
+                :param C: Is the inverse of regularization strength for the classification problem for elastic net.
+        """
+        self.model_type = model_type
+        self.K = K
+        self.random_state = random_state
+        self.alpha = alpha
+        self.l1_ratio = l1_ratio
+        self.C = C
 
-    def mrmr(self, X: pd.DataFrame, y: pd.Series, model_type: str, K: int = 10):
+    def mrmr(self, X: pd.DataFrame, y: pd.Series) -> List:
         """
         MRMR (Maximum Relevance Minimum Redundancy) selects informative and non-redundant features by ranking them according
          to their relevance to the target variable while minimizing redundancy between the selected features.
         :param X: X - should be completely numerical
         :param y: the target col
-        :param model_type:
-        :param K: num of cols to choose
-        :return: selected features (the top K features)
+        :return: List of selected features (the top K features)
         """
 
-        if model_type == 'classification':
-            selected_features = mrmr_classif(X=X, y=y, K=K)
+        if self.model_type == "classification":
+            selected_features = mrmr_classif(X=X, y=y, K=self.K)
 
-        elif model_type == 'regression':
-            selected_features = mrmr_regression(X=X, y=y, K=K)
+        elif self.model_type == "regression":
+            selected_features = mrmr_regression(X=X, y=y, K=self.K)
 
         return selected_features
 
-
-    def elastic_net(self, X_train, X_test, y_train, y_test):
+    def elastic_net(self, X: pd.DataFrame, y: pd.Series) -> List:
         """
-        # todo: make sure this is working and update the documentation
-        Elastic Net is a combination of L1 and L2 regularization.
+        Elastic Net is a linear regression model with both L1 and L2 regularization,
+        which combines the strengths of Ridge and Lasso regularization to balance feature selection and model complexity.
+        :param X: X - should be completely numerical
+        :param y: the target col
+        :return: List of selected features
         """
-        # Fit the Elastic Net model with different alpha values
-        alphas = np.logspace(-3, 3, num=7)
-        num_features = []
-        mse_scores = []
 
-        for alpha in alphas:
-            enet = ElasticNet(alpha=alpha, l1_ratio=0.5, random_state=123)
-            enet.fit(X_train, y_train)
-            num_nonzero = np.sum(enet.coef_ != 0)
-            num_features.append(num_nonzero)
-            y_pred = enet.predict(X_test)
-            mse_scores.append(mean_squared_error(y_test, y_pred))
+        # Instantiate Elastic Net model based on the model_type
+        if self.model_type == "regression":
+            model = ElasticNet(
+                alpha=self.alpha, l1_ratio=self.l1_ratio, random_state=self.random_state
+            )
+        elif self.model_type == "classification":
+            # The 'saga' solver is required for Elastic Net regularization in logistic regression
+            model = LogisticRegression(
+                penalty="elasticnet",
+                solver="saga",
+                l1_ratio=self.l1_ratio,
+                C=self.C,
+                random_state=self.random_state,
+            )
 
-            # Stop when the number of features becomes 0
-            if num_nonzero == 0:
-                break
-
-        # Find the alpha value that optimizes the MSE
-        best_alpha = alphas[np.argmin(mse_scores)]
-
-        # Fit the Elastic Net model with the best alpha value
-        enet = ElasticNet(alpha=best_alpha, l1_ratio=0.5, random_state=123)
-        enet.fit(X_train, y_train)
-
-        # Find the number of non-zero coefficients in the model
-        num_nonzero = np.sum(enet.coef_ != 0)
-
-        # Calculate the mean squared error (MSE) of the model
-        mse = mean_squared_error(y_test, enet.predict(X_test))
+        # Fit the model
+        model.fit(X, y)
 
         # Get the indices of the best features
-        best_feature_indices = np.where(enet.coef_ != 0)[0]
+        # because they have impact on the model's prediction
+        best_feature_indices = np.where(model.coef_ != 0)[0]
 
         # Get the names of the best features
-        best_feature_names = X_train.columns[best_feature_indices]
+        selected_features = X.columns[best_feature_indices]
+        return selected_features
 
-        return best_feature_names
+
+########## for debugging only #########
+
+
+df = pd.read_csv(
+    "/Users/gilayache/PycharmProjects/Final-project-feature-selection-in-gene-expression/data/processed/merged_dataset.csv"
+)
+columns_to_remove = ["ER", "samplename"]
+FEATURES = df.columns.drop(columns_to_remove)
+
+from sklearn.preprocessing import LabelEncoder
+
+# encode the categorical features
+cat_columns = df.select_dtypes(include=["object"]).columns
+for column in cat_columns:
+    label_encoder = LabelEncoder()
+    df[column] = label_encoder.fit_transform(df[column])
+
+
+X = df[FEATURES]
+y = df["ER"]
+
+fs = FeatureSelection(
+    model_type="classification", K=10, random_state=42, alpha=0.01, l1_ratio=0.5, C=0.01
+)
+# mrmr
+# selected_feature_names = fs.mrmr(X, y)
+# print(selected_feature_names)
+# print(len(selected_feature_names))
+
+# Elastic net
+# Filling missing values with 0
+# Dropping columns with all missing values
+cols_with_nan = X.columns[X.isna().any()].tolist()
+[
+    X.drop(columns=col, inplace=True)
+    for col in cols_with_nan
+    if X[col].isna().sum() / X.shape[0] == 1
+]
+
+X = X.fillna(0)
+selected_feature_names = fs.elastic_net(X, y)
+
+print(selected_feature_names)
+print(len(selected_feature_names))
