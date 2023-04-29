@@ -41,7 +41,7 @@ class FeaturesSelection:
 
         return self
 
-    def transform(self):
+    def transform(self, X):
         """
 
         """

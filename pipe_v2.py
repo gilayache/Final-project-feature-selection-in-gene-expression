@@ -35,7 +35,7 @@ class RunPipeline:
         # preprocesing.Preprocessing.remove_low_variance_columns(self)
         X = preprocesing.Preprocessing.remove_constant_columns(self, X)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.test_size, random_state=self.seed)
-
+        y_train, y_test = y_train.values.reshape(-1,1), y_test.values.reshape(-1,1)
         self.features = X_train.columns.to_list()
         self.numerical_features = X_train.select_dtypes("number").columns
         self.categorical_features = X_train.select_dtypes("object").columns
@@ -47,11 +47,9 @@ class RunPipeline:
                     ('Scaling', scaling.Scaler(scaler_name=self.scaler_name)),
                     ('Features Selection', features_selection.FeaturesSelection(fs_method=self.fs_method,
                                         model_type=self.model_type, K=self.K, random_state=self.seed)),
-                    ('Modeling', modeling.Model(self.model_name))])
+                    ('Modeling', modeling.Model(model_name=self.model_name))])
 
-        # todo: create class for the below
-        # Evaluation
-        # Save the model
+        # todo: Evaluation, Save the model
 
         pipe.fit(X_train, y_train)
 
