@@ -14,25 +14,25 @@ class Preprocessing:
         self.categorical_features = []
         self.preprocessing_operations = preprocessing_operations
         self.df = df
-
-    def fit(self, X, y=None):
-        """
-
-        """
-
-        for method_name in self.list_of_methods:
-            if method_name in self.preprocessing_operations:
-                    getattr(self, method_name)()
-                    # method()
-
-    def transform(self, X,y=None):
-        """
-
-        """
-        for method_name in self.list_of_methods:
-            if method_name in self.preprocessing_operation:
-                    getattr(self, method_name)()
-                    # method()
+    #
+    # def fit(self, X, y=None):
+    #     """
+    #
+    #     """
+    #
+    #     for method_name in self.list_of_methods:
+    #         if method_name in self.preprocessing_operations:
+    #                 getattr(self, method_name)()
+    #                 # method()
+    #
+    # def transform(self, X,y=None):
+    #     """
+    #
+    #     """
+    #     for method_name in self.list_of_methods:
+    #         if method_name in self.preprocessing_operation:
+    #                 getattr(self, method_name)()
+    #                 # method()
 
     def remove_constant_columns(self, X):
         """
@@ -65,9 +65,6 @@ class Preprocessing:
         """
         if self.run_type == 'train':
             _orig_features = self.df.columns.drop(self.columns_to_remove).to_list()
-        #     #
-            # self.numerical_features = self.df[self.features].select_dtypes("number").columns
-            # self.categorical_features = self.df[self.features].select_dtypes("object").columns
 
         X = self.df[_orig_features]
         y = self.df[self.target_col]
