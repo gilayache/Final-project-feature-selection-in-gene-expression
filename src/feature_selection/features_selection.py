@@ -5,20 +5,13 @@ from sklearn.linear_model import ElasticNet
 from sklearn.linear_model import LogisticRegression
 from typing import List
 
-class FeatureSelection:
+class FeaturesSelection:
     """
     This class is responsible for feature selection. Each method returns the selected features
     """
 
-    def __init__(
-        self,
-        model_type: str,
-        K: int,
-        random_state: int,
-        alpha: float,
-        l1_ratio: float,
-        C: float,
-    ):
+    def __init__(self, fs_method: str, model_type: str, K: int = 5, random_state: int = 42, alpha: float =  0.2,
+                 l1_ratio: float = 0.3, C: float = 0.4):
         """
                 :param model_type: `regression` or `classification`
                 :param K: num of cols to choose for mrmr.
@@ -27,12 +20,30 @@ class FeatureSelection:
         :       :param l1_ratio: controls the mix of L1 and L2 penalties in the Elastic Net regularization.
                 :param C: Is the inverse of regularization strength for the classification problem for elastic net.
         """
+        self.fs_method = fs_method
         self.model_type = model_type
         self.K = K
         self.random_state = random_state
         self.alpha = alpha
         self.l1_ratio = l1_ratio
         self.C = C
+        self.selected_features = []
+
+    def fit(self, X, y=None):
+        """
+
+        """
+        if self.fs_method == "mrmr":
+            self.selected_features = self.mrmr(X, y=y)
+
+        elif self.fs_method == "elastic_net":
+            self.elastic_net(X, y=y)
+
+    def transform(self):
+        """
+
+        """
+        return self.selected_features
 
     def mrmr(self, X: pd.DataFrame, y: pd.Series) -> List:
         """
