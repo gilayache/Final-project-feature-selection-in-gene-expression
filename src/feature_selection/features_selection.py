@@ -75,18 +75,11 @@ class FeaturesSelection:
 
         # Instantiate Elastic Net model based on the model_type
         if self.model_type == "regression":
-            model = ElasticNet(
-                alpha=self.alpha, l1_ratio=self.l1_ratio, random_state=self.random_state
-            )
+            model = ElasticNet(alpha=self.alpha, l1_ratio=self.l1_ratio, random_state=self.random_state)
         elif self.model_type == "classification":
             # The 'saga' solver is required for Elastic Net regularization in logistic regression
-            model = LogisticRegression(
-                penalty="elasticnet",
-                solver="saga",
-                l1_ratio=self.l1_ratio,
-                C=self.C,
-                random_state=self.random_state,
-            )
+            model = LogisticRegression(penalty="elasticnet", solver="saga", l1_ratio=self.l1_ratio,
+                C=self.C, random_state=self.random_state)
 
         # Fit the model
         model.fit(X, y)
