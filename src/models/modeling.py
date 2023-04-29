@@ -1,5 +1,5 @@
 from sklearn.linear_model import LogisticRegression, LinearRegression
-
+import pandas as pd
 
 class Model():
 
@@ -14,6 +14,8 @@ class Model():
         """
 
         """
+        if type(y) == pd.Series:
+            y = y.values.reshape(-1, 1)
         self.model.fit(X, y)
         return self
 
@@ -29,7 +31,9 @@ class Model():
 
         """
         if model_name == 'LogisticRegression':
-            self.model = LogisticRegression()
+            model = LogisticRegression()
 
         elif model_name == 'LinearRegression':
-            self.model = LinearRegression()
+            model = LinearRegression()
+
+        return model
