@@ -34,38 +34,42 @@ class Preprocessing:
                     getattr(self, method_name)()
                     # method()
 
-    def remove_constant_columns(self):
+    def remove_constant_columns(self, X):
         """
         remove constant columns from the given X
         """
         if self.run_type == 'train':
-            self.constant_cols = self.df.loc[:, self.df.apply(pd.Series.nunique) == 1].columns.to_list()
+            self.constant_cols = X.loc[:, X.apply(pd.Series.nunique) == 1].columns.to_list()
 
-        self.df.drop(columns=self.constant_cols, inplace=True)
+        X.drop(columns=self.constant_cols, inplace=True)
+
+        return X
 
 
-    def remove_nan_columns(self):
+    def remove_nan_columns(self, X):
         """
         remove columns that contain only nan values from the given df
         """
         if self.run_type == 'train':
-            self.cols_with_nan = [col for col in self.df.columns if self.df[col].isna().any() > 0]
+            self.cols_with_nan = [col for col in X.columns if X[col].isna().any() > 0]
 
         for col in self.cols_with_nan:
-            if self.df[col].isna().sum() / self.df.shape[0] == 1:
-                self.df.drop(columns=col, inplace=True)
+            if X[col].isna().sum() / X.shape[0] == 1:
+                X.drop(columns=col, inplace=True)
+
+        return X
 
     def create_x_y(self):
         """
 
         """
         if self.run_type == 'train':
-            self.features = self.df.columns.drop(self.columns_to_remove).to_list()
+            _orig_features = self.df.columns.drop(self.columns_to_remove).to_list()
+        #     #
+            # self.numerical_features = self.df[self.features].select_dtypes("number").columns
+            # self.categorical_features = self.df[self.features].select_dtypes("object").columns
 
-            self.numerical_features = self.df[self.features].select_dtypes("number").columns
-            self.categorical_features = self.df[self.features].select_dtypes("object").columns
-
-        X = self.df[self.features]
+        X = self.df[_orig_features]
         y = self.df[self.target_col]
 
         return X, y

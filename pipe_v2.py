@@ -18,10 +18,10 @@ set_config(display="diagram")
 
 class RunPipeline:
 
-    def __init__(self, input_data_path, input_param_path):
+    def __init__(self, input_data_path, params_path):
         self.input_path = input_data_path or 'data/processed/merged_dataset.csv'
         self.df = pd.DataFrame()
-        self.params_path = input_param_path
+        self.params_path = params_path
 
 
     def run(self):
@@ -30,17 +30,21 @@ class RunPipeline:
         """
         self.df, params = self.load_data_and_params()
         X, y = preprocesing.Preprocessing.create_x_y(self)
-        preprocesing.Preprocessing.remove_nan_columns(self)
+        X = preprocesing.Preprocessing.remove_nan_columns(self, X)
         # todo the below as well ?
         # preprocesing.Preprocessing.remove_low_variance_columns(self)
-        preprocesing.Preprocessing.remove_constant_columns(self)
+        X = preprocesing.Preprocessing.remove_constant_columns(self, X)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.test_size, random_state=self.seed)
+
+        self.features = X_train.columns.to_list()
+        self.numerical_features = X_train.select_dtypes("number").columns
+        self.categorical_features = X_train.select_dtypes("object").columns
 
         pipe = Pipeline(steps=[
                     ('Imputation', imputation.Imputer(categorical_features=self.categorical_features,
                                                 numerical_features=self.numerical_features)),
                     ('Encoding', encoding.Encoder(encoder_name=self.encoder_name, features=self.features)),
-                    ('Scaling', scaling.Scaler(features=self.features)),
+                    ('Scaling', scaling.Scaler(scaler_name=self.scaler_name)),
                     ('Features Selection', features_selection.FeaturesSelection(fs_method=self.fs_method,
                                         model_type=self.model_type, K=self.K, random_state=self.seed)),
                     ('Modeling', modeling.Model(self.model_name))])
@@ -69,7 +73,7 @@ class RunPipeline:
 
 
 if __name__ == '__main__':
-    run_pipeline = RunPipeline(input_param_path='src/data/params.yaml',
+    run_pipeline = RunPipeline(params_path='src/data/params.yaml',
                                input_data_path='data/processed/merged_dataset.csv'
     )
     run_pipeline.run()

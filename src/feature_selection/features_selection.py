@@ -39,6 +39,8 @@ class FeaturesSelection:
         elif self.fs_method == "elastic_net":
             self.elastic_net(X, y=y)
 
+        return self
+
     def transform(self):
         """
 

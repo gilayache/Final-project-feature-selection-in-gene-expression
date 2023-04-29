@@ -18,24 +18,27 @@ class Encoder(BaseEstimator, TransformerMixin):
         """
 
         """
-        # self.encoder = OneHotEncoder()
         self.encoder.fit(X)
+
         return self
 
     def transform(self, X):
         """
 
         """
-        X_transformed = pd.concat(
-            [
-                X.drop(columns=self.features).reset_index(drop=True),
-                pd.DataFrame(
-                    self.encoder.transform(X[self.features]),
-                    columns=self.encoder.get_feature_names_out(),
-                ),
-            ],
-            axis=1,
-        )
+        X_transformed = pd.DataFrame(self.encoder.transform(X[self.features]))
+        # X_transformed = pd.concat(
+        #     [
+        #         X.drop(columns=self.features).reset_index(drop=True),
+        #         pd.DataFrame(
+        #             self.encoder.transform(X[self.features]),
+        #             columns=self.encoder.get_feature_names_out(),
+        #         ),
+        #     ],
+        #     axis=1,
+        # )
+        self.encoded_features = X_transformed.columns.to_list()
+
         return X_transformed
 
     def InitEncoder(self, encoder_name):
@@ -43,7 +46,9 @@ class Encoder(BaseEstimator, TransformerMixin):
 
         """
         if encoder_name == 'OneHotEncoder':
-            self.encoder = OneHotEncoder()
+            encoder = OneHotEncoder()
         #
         # elif encoder_name == 'OrdinalEncoder':
-        #     self.encoder = OrdinalEncoder()
+        #     encoder = OrdinalEncoder()
+
+        return encoder
