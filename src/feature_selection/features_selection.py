@@ -37,7 +37,7 @@ class FeaturesSelection:
             self.selected_features = self.mrmr(X, y=y)
 
         elif self.fs_method == "elastic_net":
-            self.elastic_net(X, y=y)
+            self.selected_features = self.elastic_net(X, y=y)
 
         return self
 
@@ -45,7 +45,7 @@ class FeaturesSelection:
         """
 
         """
-        return self.selected_features
+        return X[self.selected_features]
 
     def mrmr(self, X: pd.DataFrame, y: pd.Series) -> List:
         """
@@ -90,6 +90,7 @@ class FeaturesSelection:
 
         # Get the names of the best features
         selected_features = X.columns[best_feature_indices]
+
         return selected_features
 
 
