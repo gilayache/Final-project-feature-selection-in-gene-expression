@@ -7,16 +7,20 @@ class Model():
         """
 
         """
-        # self.model_name = model_name
         self.model = self.InitModel(model_name)
 
     def fit(self, X, y=None):
         """
 
         """
-        if type(y) == pd.Series:
+        if type(y) != pd.Series: # todo: change it to == np.array/np.ndarray
+            y = y.reshape(-1, 1)
+
+        elif type(y) == pd.Series:
             y = y.values.reshape(-1, 1)
+
         self.model.fit(X, y)
+
         return self
 
     def transform(self, X):
@@ -24,6 +28,7 @@ class Model():
 
         """
         X_transformed = self.model.transform(X)
+
         return X_transformed
 
     def InitModel(self, model_name):

@@ -12,9 +12,6 @@ import imputation, preprocesing, scaling, encoding, modeling, features_selection
 from src import Utils
 from sklearn.model_selection import train_test_split
 
-pd.options.display.precision = 4
-pd.options.mode.chained_assignment = None
-set_config(display="diagram")
 
 class RunPipeline:
 
