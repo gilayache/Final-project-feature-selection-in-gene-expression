@@ -29,7 +29,7 @@ class FeaturesSelection:
         self.C = C
         self.selected_features = []
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         """
 
         """
