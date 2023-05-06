@@ -15,3 +15,4 @@ fs_method: 'mrmr'
 preprocessing_operations: ['remove_constant_columns', 'remove_nan_columns']
 encoder_name: 'OneHotEncoder'
 scaler_name: 'StandardScaler'
+
