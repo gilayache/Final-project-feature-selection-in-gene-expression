@@ -1,4 +1,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
+import time
+start_time = time.time()
+
 
 
 class Scaler(BaseEstimator, TransformerMixin):
@@ -8,8 +11,6 @@ class Scaler(BaseEstimator, TransformerMixin):
         """
         self.scaler_name = scaler_name
         # self.encoded_features = encoded_features
-
-
 
     def fit(self, X, y=None):
         """
@@ -27,5 +28,10 @@ class Scaler(BaseEstimator, TransformerMixin):
         """
         X_transformed = X.copy()
         X_transformed = (X - self.min) / self.range
+
+        end_time = time.time()
+        total_time = end_time - start_time
+        print(f"Scaling was done successfully in {total_time:.2f} seconds")
+        print(X_transformed)
 
         return X_transformed

@@ -8,10 +8,15 @@ from sklearn.metrics import mean_squared_error
 import pandas as pd
 import numpy as np
 
-import imputation, preprocesing, scaling, encoding, modeling, features_selection
+import src.Preprocessing.imputation as imputation
+import src.Preprocessing.preprocesing as preprocesing
+import src.Preprocessing.scaling as scaling
+import src.Preprocessing.encoding as encoding
+import src.models.modeling as modeling
+import src.feature_selection.features_selection as features_selection
+
 from src import Utils
 from sklearn.model_selection import train_test_split
-
 
 class RunPipeline:
 

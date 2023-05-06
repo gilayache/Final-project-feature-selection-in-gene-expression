@@ -4,7 +4,9 @@ from mrmr import mrmr_classif, mrmr_regression
 from sklearn.linear_model import ElasticNet
 from sklearn.linear_model import LogisticRegression
 from typing import List
+import time
 
+start_time = time.time()
 class FeaturesSelection:
     """
     This class is responsible for feature selection. Each method returns the selected features
@@ -100,6 +102,11 @@ class FeaturesSelection:
         """
         Return the filtered dataframe after the feature selection applied
         """
+
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"The feature selection was done successfully in {elapsed_time:.2f} seconds")
+        print(X[self.selected_features])
         return X[self.selected_features]
 
 

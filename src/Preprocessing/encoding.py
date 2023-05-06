@@ -1,6 +1,8 @@
 import pandas as pd
 from category_encoders import OneHotEncoder
 from sklearn.base import BaseEstimator, TransformerMixin
+import time
+start_time = time.time()
 
 
 class Encoder(BaseEstimator, TransformerMixin):
@@ -27,18 +29,11 @@ class Encoder(BaseEstimator, TransformerMixin):
 
         """
         X_transformed = pd.DataFrame(self.encoder.transform(X[self.features]))
-        # X_transformed = pd.concat(
-        #     [
-        #         X.drop(columns=self.features).reset_index(drop=True),
-        #         pd.DataFrame(
-        #             self.encoder.transform(X[self.features]),
-        #             columns=self.encoder.get_feature_names_out(),
-        #         ),
-        #     ],
-        #     axis=1,
-        # )
-        self.encoded_features = X_transformed.columns.to_list()
 
+        self.encoded_features = X_transformed.columns.to_list()
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"Encoding was done successfully in {elapsed_time:.2f} seconds")
         return X_transformed
 
     def InitEncoder(self, encoder_name):
