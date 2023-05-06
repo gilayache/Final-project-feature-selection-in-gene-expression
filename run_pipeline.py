@@ -1,9 +1,10 @@
 import pandas as pd
 import numpy as np
+import yaml
 from sklearn.model_selection import train_test_split
 
 from src.Preprocessing import preprocesing
-from src.feature_selection import feature_selection
+from src.feature_selection import features_selection
 from sklearn.pipeline import FeatureUnion, Pipeline
 
 class run_pipeline:
@@ -90,13 +91,6 @@ class run_pipeline:
 
 
 
-    def load_data(self):
-        """
-        load the data
-        """
-        data = pd.read_csv(self.input_path)
-
-        return data
 
     def run_preprocessing_steps(self, X: pd.DataFrame, y: pd.Series):
         """

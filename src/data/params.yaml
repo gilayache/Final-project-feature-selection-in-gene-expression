@@ -1,0 +1,17 @@
+model_type: 'classification'
+model_name: 'LogisticRegression'
+columns_to_remove : ["ER", "samplename"]
+seed: 42
+test_size: 0.2
+target_col: 'Lympho'
+output_path: None
+run_type: 'train'
+K: 10
+random_state: 42
+alpha: 0.1
+l1_ratio: 0.5
+C: 0.3
+fs_method: 'mrmr'
+preprocessing_operations: ['remove_constant_columns', 'remove_nan_columns']
+encoder_name: 'OneHotEncoder'
+scaler_name: 'StandardScaler'
