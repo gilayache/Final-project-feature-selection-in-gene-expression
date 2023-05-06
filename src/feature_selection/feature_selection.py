@@ -132,9 +132,9 @@ class FeaturesSelection:
 #
 # X = X.fillna(0)
 #
-# # mrmr
+# mrmr
 # fs = FeaturesSelection(
-#     fs_method="elastic_net", model_type="classification", K=10, random_state=42, alpha=0.01, l1_ratio=0.5, C=0.01
+#     fs_method="mrmr", model_type="classification", K=10, random_state=42, alpha=0.01, l1_ratio=0.5, C=0.01
 # )
 #
 # # Fit the FeaturesSelection object on the data
