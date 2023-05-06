@@ -10,6 +10,7 @@ class FeaturesSelection:
     This class is responsible for feature selection. Each method returns the selected features
     """
 
+
     def __init__(self, fs_method: str, model_type: str, K: int = 5, random_state: int = 42, alpha: float = 0.01,
                  l1_ratio: float = 0.5, C: float = 0.01):
         """
