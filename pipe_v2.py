@@ -71,7 +71,6 @@ class RunPipeline:
         return df, params
 
 
-
 if __name__ == '__main__':
     run_pipeline = RunPipeline(params_path='src/data/params.yaml',
                                input_data_path='data/processed/merged_dataset.csv'

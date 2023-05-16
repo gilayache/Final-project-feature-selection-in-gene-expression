@@ -106,7 +106,7 @@ class FeaturesSelection:
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f"The feature selection was done successfully in {elapsed_time:.2f} seconds")
-        print(X[self.selected_features])
+        # print(X[self.selected_features])
         return X[self.selected_features]
 
 

@@ -32,6 +32,6 @@ class Scaler(BaseEstimator, TransformerMixin):
         end_time = time.time()
         total_time = end_time - start_time
         print(f"Scaling was done successfully in {total_time:.2f} seconds")
-        print(X_transformed)
+        # print(X_transformed)
 
         return X_transformed
