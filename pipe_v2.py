@@ -1,12 +1,6 @@
-import pandas as pd
-from sklearn import set_config
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import FunctionTransformer, OneHotEncoder, MinMaxScaler
-from sklearn.compose import ColumnTransformer
-from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_error, classification_report
 import pandas as pd
-import numpy as np
 
 import src.Preprocessing.imputation as imputation
 import src.Preprocessing.preprocesing as preprocesing
