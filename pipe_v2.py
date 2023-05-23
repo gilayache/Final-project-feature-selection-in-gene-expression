@@ -4,7 +4,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer, OneHotEncoder, MinMaxScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, classification_report
 import pandas as pd
 import numpy as np
 
@@ -14,6 +14,7 @@ import src.Preprocessing.scaling as scaling
 import src.Preprocessing.encoding as encoding
 import src.models.modeling as modeling
 import src.feature_selection.features_selection as features_selection
+
 
 from src import Utils
 from sklearn.model_selection import train_test_split
@@ -47,18 +48,26 @@ class RunPipeline:
                                                 numerical_features=self.numerical_features)),
                     ('Encoding', encoding.Encoder(encoder_name=self.encoder_name, features=self.features)),
                     ('Scaling', scaling.Scaler(scaler_name=self.scaler_name)),
-                    # ('Features Selection', features_selection.FeaturesSelection(fs_method=self.fs_method,
-                    #                     model_type=self.model_type, K=self.K, random_state=self.seed)),
+                    ('Features Selection', features_selection.FeaturesSelection(fs_method=self.fs_method,
+                                        model_type=self.model_type, K=self.K, random_state=self.seed)),
                     ('Modeling', modeling.Model(model_name=self.model_name))])
 
-        # todo: Evaluation, Save the model
+        # todo: Save the model
 
         pipe.fit(X_train, y_train)
 
         y_test_pred = pipe.predict(X_test)
 
-        mse = mean_squared_error(y_test, y_test_pred)
-        print("Mean Squared Error:", mse)
+        # evaluation
+        if self.model_type == 'regression':
+            mse = mean_squared_error(y_test, y_test_pred)
+            print("Mean Squared Error:", mse)
+        elif self.model_type == 'classification':
+            classification_rep = classification_report(y_test, y_test_pred)
+            print("Classification Report:\n", classification_rep)
+        else:
+            print("Please make sure that the model_type is regression or classification")
+
 
     def load_data_and_params(self):
 
