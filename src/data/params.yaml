@@ -2,7 +2,8 @@ model_type: 'classification'
 model_name: 'LogisticRegression'
 columns_to_remove : ["ER", "samplename"]
 seed: 42
-test_size: 0.2
+test_size: 0.3
+val_size: 0.5
 target_col: 'ER'
 output_path: None
 run_type: 'train'

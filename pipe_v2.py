@@ -31,8 +31,18 @@ class RunPipeline:
         # todo the below as well ?
         # preprocesing.Preprocessing.remove_low_variance_columns(self)
         X = preprocesing.Preprocessing.remove_constant_columns(self, X)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.test_size, random_state=self.seed)
-        y_train, y_test = y_train.values.reshape(-1,1), y_test.values.reshape(-1,1)
+
+        # Split the data into train+validation and test sets
+        X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=self.test_size,
+                                                                    random_state=self.seed)
+
+        # Further split train+validation into separate train and validation sets
+        X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=self.val_size,
+                                                          random_state=self.seed)
+
+        y_train, y_val, y_test = y_train.values.reshape(-1, 1), y_val.values.reshape(-1, 1), y_test.values.reshape(-1,
+                                                                                                                   1)
+
         self.features = X_train.columns.to_list()
         self.numerical_features = X_train.select_dtypes("number").columns
         self.categorical_features = X_train.select_dtypes("object").columns
@@ -47,18 +57,17 @@ class RunPipeline:
                     ('Modeling', modeling.Model(model_name=self.model_name))])
 
         # todo: Save the model
-
-        pipe.fit(X_train, y_train)
-
+        # since current we are not using the validation set
+        pipe.fit(X_train_val, y_train_val)
         y_test_pred = pipe.predict(X_test)
 
         # evaluation
         if self.model_type == 'regression':
-            mse = mean_squared_error(y_test, y_test_pred)
-            print("Mean Squared Error:", mse)
+            mse_test = mean_squared_error(y_test, y_test_pred)
+            print("Test Mean Squared Error:", mse_test)
         elif self.model_type == 'classification':
-            classification_rep = classification_report(y_test, y_test_pred)
-            print("Classification Report:\n", classification_rep)
+            classification_rep_test = classification_report(y_test, y_test_pred)
+            print("Test Classification Report:\n", classification_rep_test)
         else:
             print("Please make sure that the model_type is regression or classification")
 
