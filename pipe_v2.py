@@ -32,12 +32,12 @@ class RunPipeline:
         # preprocesing.Preprocessing.remove_low_variance_columns(self)
         X = preprocesing.Preprocessing.remove_constant_columns(self, X)
 
-        # Split the data into train+validation and test sets
-        X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=self.test_size,
+        # Split the data into train and test sets
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.test_size,
                                                                     random_state=self.seed)
 
-        # Further split train+validation into separate train and validation sets
-        X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=self.val_size,
+        # Further split train into separate train and validation sets
+        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=self.val_size,
                                                           random_state=self.seed)
 
         y_train, y_val, y_test = y_train.values.reshape(-1, 1), y_val.values.reshape(-1, 1), y_test.values.reshape(-1,
@@ -58,15 +58,16 @@ class RunPipeline:
 
         # todo: Save the model
         # since current we are not using the validation set
-        pipe.fit(X_train_val, y_train_val)
-        y_test_pred = pipe.predict(X_test)
+        # --> todo: we should use it in the hyperparam step - should we create it from outsize the pipe or from the inside?
+        pipe.fit(y_train, y_train)
+        y_pred = pipe.predict(X_test)
 
         # evaluation
         if self.model_type == 'regression':
-            mse_test = mean_squared_error(y_test, y_test_pred)
+            mse_test = mean_squared_error(y_test, y_pred)
             print("Test Mean Squared Error:", mse_test)
         elif self.model_type == 'classification':
-            classification_rep_test = classification_report(y_test, y_test_pred)
+            classification_rep_test = classification_report(y_test, y_pred)
             print("Test Classification Report:\n", classification_rep_test)
         else:
             print("Please make sure that the model_type is regression or classification")
