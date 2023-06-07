@@ -8,7 +8,6 @@ import time
 from tqdm import tqdm
 
 from sklearn.feature_selection import RFE
-from lightgbm import LGBMRegressor, LGBMClassifier
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 
 
@@ -94,10 +93,6 @@ class FeaturesSelection:
         # Get the names of the best features
         selected_features = X.columns[best_feature_indices]
         return selected_features
-
-    from tqdm import tqdm
-
-    from tqdm import tqdm
 
     def rfe(self, X: pd.DataFrame, y: pd.Series) -> List:
         """
