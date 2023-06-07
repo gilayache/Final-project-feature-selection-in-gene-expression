@@ -1,6 +1,6 @@
 model_type: 'regression'
 model_name: 'LinearRegression'
-columns_to_remove : ["ER", "samplename"]
+columns_to_remove : ["Lympho", "samplename"]
 seed: 42
 test_size: 0.3
 val_size: 0.5
