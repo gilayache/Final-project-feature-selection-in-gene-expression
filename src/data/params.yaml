@@ -1,18 +1,19 @@
-model_type: 'regression'
-model_name: 'LinearRegression'
+model_type: 'classification'
+model_name: 'LogisticRegression'
 columns_to_remove : ["Lympho", "samplename"]
 seed: 42
 test_size: 0.3
 val_size: 0.5
-target_col: 'Lympho'
+target_col: 'ER'
 output_path: None
 run_type: 'train'
-K: 5
+K: 20
 random_state: 123
 alpha: 0.1
 l1_ratio: 0.5
 C: 10
-fs_method: 'elastic_net'
+fs_method_1: 'mrmr'
+fs_method_2: 'rfe'
 n_features_to_select: 10
 preprocessing_operations: ['remove_constant_columns', 'remove_nan_columns']
 encoder_name: 'OneHotEncoder'

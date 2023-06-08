@@ -18,10 +18,11 @@ class FeaturesSelection:
     """
 
 
-    def __init__(self, fs_method: str, model_type: str, K: int = 5, random_state: int = 42, alpha: float = 0.01,
+    def __init__(self, fs_method_1: str,fs_method_2:str, model_type: str, K: int = 5, random_state: int = 42, alpha: float = 0.01,
                  l1_ratio: float = 0.5, C: float = 0.01, n_features_to_select: int = 10):
         """
-        :param fs_method: the method of the feature selection (elastic_net or mrr)
+        :param fs_method_1: the first method of the feature selection
+        :param fs_method_1: the second method of the feature selection
         :param model_type: `regression` or `classification`
         :param K: num of cols to choose for mrmr.
         :param random_state.
@@ -32,7 +33,8 @@ class FeaturesSelection:
         :param n_features_to_select: Number of features to select (for rfe).
 
         """
-        self.fs_method = fs_method
+        self.fs_method_1 = fs_method_1
+        self.fs_method_2 = fs_method_2
         self.model_type = model_type
         self.K = K
         self.random_state = random_state
@@ -52,9 +54,11 @@ class FeaturesSelection:
         """
 
         if self.model_type == "classification":
+            print("Running the mrr: ")
             selected_features = mrmr_classif(X=X, y=y, K=self.K)
 
         elif self.model_type == "regression":
+            print("Running the mrr: ")
             selected_features = mrmr_regression(X=X, y=y, K=self.K)
 
         return selected_features
@@ -94,6 +98,8 @@ class FeaturesSelection:
         selected_features = X.columns[best_feature_indices]
         return selected_features
 
+    from tqdm import tqdm
+
     def rfe(self, X: pd.DataFrame, y: pd.Series) -> List:
         """
         Recursive Feature Elimination (RFE) selects features by recursively eliminating features based on their importance or coefficients.
@@ -110,16 +116,18 @@ class FeaturesSelection:
         selector = RFE(estimator=estimator, n_features_to_select=self.n_features_to_select)
 
         selected_features = []
-        n_iterations = X.shape[1] - self.n_features_to_select + 1
+        n_iterations = X.shape[1]
 
         # Iterate over the RFE steps using tqdm
         with tqdm(total=n_iterations, desc="RFE Progress") as pbar:
             for _ in range(n_iterations):
                 selector.fit(X, y)
-                selected_features.append(X.columns[selector.support_])
-                X = X.loc[:, selector.support_]
+                feature_ranks = selector.ranking_
+                ranked_features = sorted(zip(X.columns, feature_ranks), key=lambda x: x[1])
+                selected_features = [f[0] for f in ranked_features[:self.n_features_to_select]]
+                X = X[selected_features]
                 pbar.update()
-
+        print(f"The final number of features is: {len(selected_features)}")
         return selected_features
 
     def fit(self, X:pd.DataFrame, y:pd.Series):
@@ -127,14 +135,17 @@ class FeaturesSelection:
         Applying the feature selection method and return the all the feature selection parameters
         including the features names.
         """
-        if self.fs_method == "mrmr":
+        if self.fs_method_1 == "mrmr" or self.fs_method_2 == "mrmr":
             self.selected_features = self.mrmr(X, y=y)
 
-        elif self.fs_method == "elastic_net":
+        elif self.fs_method_1 == "elastic_net" or self.fs_method_2 == "elastic_net":
             self.selected_features = self.elastic_net(X, y=y)
 
-        elif self.fs_method == "rfe":
+        elif self.fs_method_1 == "rfe" or self.fs_method_2 == "rfe":
             self.selected_features = self.rfe(X, y=y)
+
+        else:
+            print("please provide a valid feature selection method")
 
         return self
 
@@ -146,5 +157,4 @@ class FeaturesSelection:
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f"The feature selection was done successfully in {elapsed_time:.2f} seconds")
-        # print(X[self.selected_features])
         return X[self.selected_features]
