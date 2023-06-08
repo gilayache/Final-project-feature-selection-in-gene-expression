@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 from sklearn.feature_selection import RFE
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-
+import lightgbm as lgb
 
 start_time = time.time()
 class FeaturesSelection:
@@ -109,9 +109,9 @@ class FeaturesSelection:
         """
 
         if self.model_type == "regression":
-            estimator = RandomForestRegressor(random_state=self.random_state)
+            estimator = lgb.LGBMRegressor(random_state=self.random_state)
         elif self.model_type == "classification":
-            estimator = RandomForestClassifier(random_state=self.random_state)
+            estimator = lgb.LGBMClassifier(random_state=self.random_state)
 
         selector = RFE(estimator=estimator, n_features_to_select=self.n_features_to_select)
 
