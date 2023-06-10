@@ -116,18 +116,21 @@ class FeaturesSelection:
         selector = RFE(estimator=estimator, n_features_to_select=self.n_features_to_select)
 
         selected_features = []
-        n_iterations = X.shape[1]
 
         # Iterate over the RFE steps using tqdm
-        with tqdm(total=n_iterations, desc="RFE Progress") as pbar:
-            for _ in range(n_iterations):
+        with tqdm(total=X.shape[1] - self.n_features_to_select, desc="RFE Progress") as pbar:
+            for _ in range(X.shape[1] - self.n_features_to_select):
                 selector.fit(X, y)
                 feature_ranks = selector.ranking_
-                ranked_features = sorted(zip(X.columns, feature_ranks), key=lambda x: x[1])
-                selected_features = [f[0] for f in ranked_features[:self.n_features_to_select]]
-                X = X[selected_features]
+                worst_feature = np.argmax(feature_ranks)
+                selected_features.append(X.columns[worst_feature])
+                X = X.drop(columns=X.columns[worst_feature])
                 pbar.update()
+
+        selected_features.reverse()  # Reverse the list to get the best features
+
         print(f"The final number of features is: {len(selected_features)}")
+
         return selected_features
 
     def fit(self, X:pd.DataFrame, y:pd.Series):

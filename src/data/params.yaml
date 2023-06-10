@@ -7,14 +7,14 @@ val_size: 0.5
 target_col: 'Lympho'
 output_path: None
 run_type: 'train'
-K: 200
+K: 20
 random_state: 123
 alpha: 0.1
 l1_ratio: 0.5
 C: 10
 fs_method_1: 'mrmr'
 fs_method_2: 'rfe'
-n_features_to_select: 50
+n_features_to_select: 10
 preprocessing_operations: ['remove_constant_columns', 'remove_nan_columns']
 encoder_name: 'OneHotEncoder'
 scaler_name: 'StandardScaler'
