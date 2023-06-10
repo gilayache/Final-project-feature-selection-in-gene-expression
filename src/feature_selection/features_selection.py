@@ -115,7 +115,7 @@ class FeaturesSelection:
 
         selector = RFE(estimator=estimator, n_features_to_select=self.n_features_to_select)
 
-        selected_features = []
+        selected_features_to_remove = []
 
         # Iterate over the RFE steps using tqdm
         with tqdm(total=X.shape[1] - self.n_features_to_select, desc="RFE Progress") as pbar:
@@ -123,11 +123,11 @@ class FeaturesSelection:
                 selector.fit(X, y)
                 feature_ranks = selector.ranking_
                 worst_feature = np.argmax(feature_ranks)
-                selected_features.append(X.columns[worst_feature])
+                selected_features_to_remove.append(X.columns[worst_feature])
                 X = X.drop(columns=X.columns[worst_feature])
                 pbar.update()
 
-        selected_features.reverse()  # Reverse the list to get the best features
+        selected_features = X.columns[~X.columns.isin(selected_features_to_remove)].tolist()
 
         print(f"The final number of features is: {len(selected_features)}")
 
