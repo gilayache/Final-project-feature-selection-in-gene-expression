@@ -52,8 +52,16 @@ class RunPipeline:
                                                 numerical_features=self.numerical_features)),
                     ('Encoding', encoding.Encoder(encoder_name=self.encoder_name, features=self.features)),
                     ('Scaling', scaling.Scaler(scaler_name=self.scaler_name)),
-                    ('Features Selection', features_selection.FeaturesSelection(fs_method=self.fs_method,
-                                        model_type=self.model_type, K=self.K, random_state=self.seed)),
+                    ('Features Selection 1', features_selection.FeaturesSelection(fs_method_1=self.fs_method_1,
+                                                                                  fs_method_2=None,
+                                                                                  model_type=self.model_type,
+                                                                                  K=self.K,
+                                                                                  random_state=self.seed)),
+                    ('Features Selection 2', features_selection.FeaturesSelection(fs_method_2=self.fs_method_2,
+                                                                                  fs_method_1= None,
+                                                                                  model_type=self.model_type,
+                                                                                  random_state=self.seed,
+                                                                                  n_features_to_select=self.n_features_to_select)),
                     ('Modeling', modeling.Model(model_name=self.model_name))])
 
         # todo: Save the model

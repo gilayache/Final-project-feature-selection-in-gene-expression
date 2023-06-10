@@ -5,6 +5,11 @@ from sklearn.linear_model import ElasticNet
 from sklearn.linear_model import LogisticRegression
 from typing import List
 import time
+from tqdm import tqdm
+
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+import lightgbm as lgb
 
 start_time = time.time()
 class FeaturesSelection:
@@ -13,10 +18,11 @@ class FeaturesSelection:
     """
 
 
-    def __init__(self, fs_method: str, model_type: str, K: int = 5, random_state: int = 42, alpha: float = 0.01,
-                 l1_ratio: float = 0.5, C: float = 0.01):
+    def __init__(self, fs_method_1: str,fs_method_2:str, model_type: str, K: int = 5, random_state: int = 42, alpha: float = 0.01,
+                 l1_ratio: float = 0.5, C: float = 0.01, n_features_to_select: int = 10):
         """
-        :param fs_method: the method of the feature selection (elastic_net or mrr)
+        :param fs_method_1: the first method of the feature selection
+        :param fs_method_1: the second method of the feature selection
         :param model_type: `regression` or `classification`
         :param K: num of cols to choose for mrmr.
         :param random_state.
@@ -24,14 +30,18 @@ class FeaturesSelection:
         :param l1_ratio: controls the mix of L1 and L2 penalties in the Elastic Net regularization.
         :param C: Is the inverse of regularization strength for the classification problem for elastic net.
         :param List of the names of the selected features
+        :param n_features_to_select: Number of features to select (for rfe).
+
         """
-        self.fs_method = fs_method
+        self.fs_method_1 = fs_method_1
+        self.fs_method_2 = fs_method_2
         self.model_type = model_type
         self.K = K
         self.random_state = random_state
         self.alpha = alpha
         self.l1_ratio = l1_ratio
         self.C = C
+        self.n_features_to_select = n_features_to_select
         self.selected_features = []
 
     def mrmr(self, X: pd.DataFrame, y: pd.Series) -> List:
@@ -44,9 +54,11 @@ class FeaturesSelection:
         """
 
         if self.model_type == "classification":
+            print("Running the mrr: ")
             selected_features = mrmr_classif(X=X, y=y, K=self.K)
 
         elif self.model_type == "regression":
+            print("Running the mrr: ")
             selected_features = mrmr_regression(X=X, y=y, K=self.K)
 
         return selected_features
@@ -86,16 +98,58 @@ class FeaturesSelection:
         selected_features = X.columns[best_feature_indices]
         return selected_features
 
+    from tqdm import tqdm
+
+    def rfe(self, X: pd.DataFrame, y: pd.Series) -> List:
+        """
+        Recursive Feature Elimination (RFE) selects features by recursively eliminating features based on their importance or coefficients.
+        :param X: X - should be completely numerical
+        :param y: the target col
+        :return: List of selected features
+        """
+
+        if self.model_type == "regression":
+            estimator = lgb.LGBMRegressor(random_state=self.random_state)
+        elif self.model_type == "classification":
+            estimator = lgb.LGBMClassifier(random_state=self.random_state)
+
+        selector = RFE(estimator=estimator, n_features_to_select=self.n_features_to_select)
+
+        selected_features_to_remove = []
+
+        # Iterate over the RFE steps using tqdm
+        with tqdm(total=X.shape[1] - self.n_features_to_select, desc="RFE Progress") as pbar:
+            for _ in range(X.shape[1] - self.n_features_to_select):
+                selector.fit(X, y)
+                feature_ranks = selector.ranking_
+                worst_feature = np.argmax(feature_ranks)
+                selected_features_to_remove.append(X.columns[worst_feature])
+                X = X.drop(columns=X.columns[worst_feature])
+                pbar.update()
+
+        selected_features = X.columns[~X.columns.isin(selected_features_to_remove)].tolist()
+
+        print(f"The final number of features is: {len(selected_features)}")
+
+        return selected_features
+
     def fit(self, X:pd.DataFrame, y:pd.Series):
         """
         Applying the feature selection method and return the all the feature selection parameters
         including the features names.
         """
-        if self.fs_method == "mrmr":
+        if self.fs_method_1 == "mrmr" or self.fs_method_2 == "mrmr":
             self.selected_features = self.mrmr(X, y=y)
 
-        elif self.fs_method == "elastic_net":
+        elif self.fs_method_1 == "elastic_net" or self.fs_method_2 == "elastic_net":
             self.selected_features = self.elastic_net(X, y=y)
+
+        elif self.fs_method_1 == "rfe" or self.fs_method_2 == "rfe":
+            self.selected_features = self.rfe(X, y=y)
+
+        else:
+            print("please provide a valid feature selection method")
+
         return self
 
     def transform(self, X:pd.DataFrame):
@@ -106,80 +160,4 @@ class FeaturesSelection:
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f"The feature selection was done successfully in {elapsed_time:.2f} seconds")
-        # print(X[self.selected_features])
         return X[self.selected_features]
-
-
-########## for debugging only #########
-
-
-# df = pd.read_csv(
-#     "/Users/gilayache/PycharmProjects/Final-project-feature-selection-in-gene-expression/data/processed/merged_dataset.csv"
-# )
-# columns_to_remove = ["ER", "samplename"]
-# FEATURES = df.columns.drop(columns_to_remove)
-# #
-# from sklearn.preprocessing import LabelEncoder
-#
-# # encode the categorical features
-# cat_columns = df.select_dtypes(include=["object"]).columns
-# for column in cat_columns:
-#     label_encoder = LabelEncoder()
-#     df[column] = label_encoder.fit_transform(df[column])
-# #
-# #
-# X = df[FEATURES]
-# y = df["ER"]
-#
-# cols_with_nan = X.columns[X.isna().any()].tolist()
-# [
-#     X.drop(columns=col, inplace=True)
-#     for col in cols_with_nan
-#     if X[col].isna().sum() / X.shape[0] == 1
-# ]
-#
-# X = X.fillna(0)
-#
-# mrmr
-# fs = FeaturesSelection(
-#     fs_method="mrmr", model_type="classification", K=10, random_state=42, alpha=0.01, l1_ratio=0.5, C=0.01
-# )
-#
-# # Fit the FeaturesSelection object on the data
-# fs.fit(X, y)
-#
-# # Transform the input data (X) using the selected features
-# transformed_X = fs.transform(X)
-#
-# # Print the transformed data
-# print(transformed_X)
-# print(len(transformed_X))
-
-
-
-
-# Elastic net
-# Filling missing values with 0
-# Dropping columns with all missing values
-# cols_with_nan = X.columns[X.isna().any()].tolist()
-# [
-#     X.drop(columns=col, inplace=True)
-#     for col in cols_with_nan
-#     if X[col].isna().sum() / X.shape[0] == 1
-# ]
-#
-# X = X.fillna(0)
-#
-# fs = FeaturesSelection(
-#     fs_method="elastic_net", model_type="classification", K=10, random_state=42, alpha=0.01, l1_ratio=0.5, C=0.01
-# )
-# # Fit the FeaturesSelection object on the data
-# fs.fit(X, y)
-#
-# # Transform the input data (X) using the selected features
-# transformed_X = fs.transform(X)
-#
-# # Print the transformed data
-# print(transformed_X)
-# print(len(transformed_X))
-
