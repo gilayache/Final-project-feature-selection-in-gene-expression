@@ -29,7 +29,20 @@ class FeaturesSelection:
     """
 
     def __init__(self, fs_method_1: str,fs_method_2:str, model_type: str, K: int, random_state: int, alpha: float,
-                 l1_ratio: float , C: float , n_features_to_select:int):
+                 l1_ratio: float , C: float , n_features_to_select:int,
+                 cv: int, verbose: int,
+                 scoring: str,
+                 max_features: int,
+                 n_population: int,
+                 crossover_proba: float,
+                 mutation_proba: float,
+                 n_generations: int,
+                 crossover_independent_proba: float,
+                 mutation_independent_proba: float,
+                 tournament_size: int,
+                 n_gen_no_change: int,
+                 caching: bool,
+                 n_jobs: int):
         """
         :param fs_method_1: the first method of the feature selection
         :param fs_method_2: the second method of the feature selection
@@ -41,7 +54,20 @@ class FeaturesSelection:
         :param C: Is the inverse of regularization strength for the classification problem for elastic net.
         :param List of the names of the selected features
         :param n_features_to_select: Number of features to select (for rfe, forward or backward).
-
+        :param cv: The cross-validation splitting strategy for GeneticSelectionCV.
+        :param verbose: Controls the verbosity of GeneticSelectionCV.
+        :param scoring: Scoring parameter for GeneticSelectionCV.
+        :param max_features: Maximum number of features to select in GeneticSelectionCV.
+        :param n_population: Size of the population in GeneticSelectionCV.
+        :param crossover_proba: Crossover probability in GeneticSelectionCV.
+        :param mutation_proba: Mutation probability in GeneticSelectionCV.
+        :param n_generations: Number of generations for GeneticSelectionCV.
+        :param crossover_independent_proba: Probability of an independent crossover in GeneticSelectionCV.
+        :param mutation_independent_proba: Probability of an independent mutation in GeneticSelectionCV.
+        :param tournament_size: Size of the tournament in GeneticSelectionCV.
+        :param n_gen_no_change: Number of generations with no change to terminate GeneticSelectionCV.
+        :param caching: Whether to use caching in GeneticSelectionCV.
+        :param n_jobs: Number of jobs to run in parallel in GeneticSelectionCV.
         """
         self.fs_method_1 = fs_method_1
         self.fs_method_2 = fs_method_2
@@ -52,6 +78,20 @@ class FeaturesSelection:
         self.l1_ratio = l1_ratio
         self.C = C
         self.n_features_to_select = n_features_to_select
+        self.cv = cv
+        self.verbose = verbose
+        self.scoring = scoring
+        self.max_features = max_features
+        self.n_population = n_population
+        self.crossover_proba = crossover_proba
+        self.mutation_proba = mutation_proba
+        self.n_generations = n_generations
+        self.crossover_independent_proba = crossover_independent_proba
+        self.mutation_independent_proba = mutation_independent_proba
+        self.tournament_size = tournament_size
+        self.n_gen_no_change = n_gen_no_change
+        self.caching = caching
+        self.n_jobs = n_jobs
 
     def mrmr(self, X: pd.DataFrame, y: pd.Series) -> List:
         """
@@ -238,20 +278,20 @@ class FeaturesSelection:
             scoring = "neg_mean_squared_error"
 
         selector = GeneticSelectionCV(estimator,
-                                      cv=5,
-                                      verbose=2,
-                                      scoring=scoring,
-                                      max_features=50,
-                                      n_population=100,
-                                      crossover_proba=0.5,
-                                      mutation_proba=0.2,
-                                      n_generations=7,
-                                      crossover_independent_proba=0.5,
-                                      mutation_independent_proba=0.04,
-                                      tournament_size=3,
-                                      n_gen_no_change=4,
-                                      caching=True,
-                                      n_jobs=-1)
+                                      cv=self.cv,
+                                      verbose=self.verbose,
+                                      scoring=self.scoring,
+                                      max_features=self.max_features,
+                                      n_population=self.n_population,
+                                      crossover_proba=self.crossover_proba,
+                                      mutation_proba=self.mutation_proba,
+                                      n_generations=self.n_generations,
+                                      crossover_independent_proba=self.crossover_independent_proba,
+                                      mutation_independent_proba=self.mutation_independent_proba,
+                                      tournament_size=self.tournament_size,
+                                      n_gen_no_change=self.n_gen_no_change,
+                                      caching=self.caching,
+                                      n_jobs=self.n_jobs)
         selector = selector.fit(X, y)
 
         selected_features = X.columns[selector.support_].tolist()
