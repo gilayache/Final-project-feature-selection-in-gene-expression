@@ -1,16 +1,25 @@
-import numpy as np
-import pandas as pd
-from mrmr import mrmr_classif, mrmr_regression
-from sklearn.linear_model import ElasticNet
-from sklearn.linear_model import LogisticRegression
+# Standard library imports
 from typing import List
 import time
-from tqdm import tqdm
-from sklearn.metrics import f1_score, mean_squared_error
 
-from sklearn.feature_selection import RFE
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+# Third-party library imports
+import numpy as np
+import pandas as pd
 import lightgbm as lgb
+from tqdm import tqdm
+
+# Scikit-learn related imports
+from sklearn.linear_model import ElasticNet, LogisticRegression, LinearRegression
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.metrics import f1_score, mean_squared_error
+from sklearn.feature_selection import RFE
+
+# Other third-party library imports
+from mrmr import mrmr_classif, mrmr_regression
+from genetic_selection import GeneticSelectionCV
+
+
 
 start_time = time.time()
 
@@ -212,6 +221,42 @@ class FeaturesSelection:
 
         return selected_features
 
+    def genetic_selection(self, X: pd.DataFrame, y: pd.Series) -> List:
+        """
+        GeneticSelectionCV uses Genetic Algorithms to find the optimal subset of features.
+        :param X: X - should be completely numerical
+        :param y: the target col
+        :return: List of selected features
+        """
+
+        # Instantiate the estimator according to the problem type
+        if self.model_type == "classification":
+            estimator = LogisticRegression()
+            scoring = "accuracy"
+        elif self.model_type == "regression":
+            estimator = LinearRegression()
+            scoring = "neg_mean_squared_error"
+
+        selector = GeneticSelectionCV(estimator,
+                                      cv=5,
+                                      verbose=2,
+                                      scoring=scoring,
+                                      max_features=200,
+                                      n_population=100,
+                                      crossover_proba=0.5,
+                                      mutation_proba=0.2,
+                                      n_generations=5,
+                                      crossover_independent_proba=0.5,
+                                      mutation_independent_proba=0.04,
+                                      tournament_size=3,
+                                      n_gen_no_change=4,
+                                      caching=True,
+                                      n_jobs=-1)
+        selector = selector.fit(X, y)
+
+        selected_features = X.columns[selector.support_].tolist()
+        return selected_features
+
     def _apply_fs_method(self, X, y, method):
         if method == "mrmr":
             selected_features = self.mrmr(X, y=y)
@@ -227,6 +272,9 @@ class FeaturesSelection:
 
         elif method == "backward_selection":
             selected_features = self.backward_selection(X, y=y)
+
+        elif method == "genetic_selection":
+            selected_features = self.genetic_selection(X, y=y)
 
         else:
             print("please provide a valid feature selection method")

@@ -16,7 +16,8 @@ matplotlib
 plotly
 mrmr_selection
 PyYAML
-
+sklearn-genetic
+lightgbm
 
 # backwards compatibility
 pathlib2
