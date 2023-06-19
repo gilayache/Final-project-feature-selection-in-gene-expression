@@ -9,6 +9,7 @@ import src.Preprocessing.encoding as encoding
 import src.models.modeling as modeling
 import src.feature_selection.features_selection as features_selection
 
+import src.evaluation.evaluate as evaluation
 
 from src import Utils
 from sklearn.model_selection import train_test_split
@@ -100,21 +101,12 @@ class RunPipeline:
                                                                                   n_jobs=self.n_jobs)),
                     ('Modeling', modeling.Model(model_name=self.model_name))])
 
-        # todo: Save the model
         # since current we are not using the validation set
         pipe.fit(X_train_val, y_train_val)
         y_test_pred = pipe.predict(X_test)
-
-        # evaluation
-        if self.model_type == 'regression':
-            mse_test = mean_squared_error(y_test, y_test_pred)
-            print("Test Mean Squared Error:", mse_test)
-        elif self.model_type == 'classification':
-            classification_rep_test = classification_report(y_test, y_test_pred)
-            print("Test Classification Report:\n", classification_rep_test)
-        else:
-            print("Please make sure that the model_type is regression or classification")
-
+        # evaluate and write the results to csv
+        evaluator = evaluation.Evaluation(self.model_type, y_test, y_test_pred, params)
+        evaluator.evaluate()
 
     def load_data_and_params(self):
 
