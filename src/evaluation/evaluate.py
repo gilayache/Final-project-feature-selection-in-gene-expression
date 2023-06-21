@@ -52,12 +52,22 @@ class Evaluation:
             # Load the existing CSV file
             existing_df = pd.read_csv(path)
 
+            # Adjust 'Time' column to desired format
+            existing_df['Time'] = pd.to_datetime(existing_df['Time']).dt.strftime('%Y-%m-%d %H:%M:%S')
+
             # Ensure the DataFrame to be appended has the same column order as the existing CSV
             df = df[existing_df.columns]
+
+            # Check if the file ends with a newline, if not, add it
+            with open(path, 'rb+') as f:
+                f.seek(-2, os.SEEK_END)
+                if f.read(2) != b'\n':
+                    f.write(b'\n')
 
             # Append DataFrame to the CSV file
             df.to_csv(path, mode='a', header=False, index=False)
         else:
             df.to_csv(path, index=False)
+
 
 
