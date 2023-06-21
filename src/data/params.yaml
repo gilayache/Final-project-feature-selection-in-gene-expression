@@ -7,7 +7,7 @@ val_size: 0.5
 target_col: 'Lympho'
 output_path: None
 run_type: 'train'
-K: 100 # for mrr
+K: 200 # for mrr
 random_state: 123
 alpha: 0.1 # for elastic_net
 l1_ratio: 0.5 # for elastic_net
