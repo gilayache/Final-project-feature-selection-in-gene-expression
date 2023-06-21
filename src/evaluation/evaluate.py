@@ -68,6 +68,3 @@ class Evaluation:
             df.to_csv(path, mode='a', header=False, index=False)
         else:
             df.to_csv(path, index=False)
-
-
-
