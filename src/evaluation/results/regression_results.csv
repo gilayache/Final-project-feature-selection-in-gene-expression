@@ -12,9 +12,19 @@ Time,Metric_MSE,Param_model_type,Param_model_name,Param_columns_to_remove,Param_
 2023-06-22 09:05:29,0.01926,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,10,123,0.1,0.5,0.01,mrmr,None,20,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,50,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
 
 2023-06-22 09:07:32,0.01054,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,30,123,0.1,0.5,0.01,mrmr,None,20,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,50,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
-,
+,,,,
 2023-06-22 09:16:19,0.00168,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,mrmr,None,20,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,50,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
 ,,,,,,,,,,,
 2023-06-22 09:36:34,0.00399,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,100,123,0.1,0.5,0.01,mrmr,None,20,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,50,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
-
+,,
 2023-06-22 09:41:41,0.00232,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,150,123,0.1,0.5,0.01,mrmr,None,20,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,50,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+
+2023-06-22 12:14:53,0.00192,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,mrmr,rfe,150,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,50,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+,
+2023-06-22 12:51:21,0.00222,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,mrmr,rfe,100,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,50,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+,
+2023-06-22 13:17:52,0.00000,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,100,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,200,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+,,,
+2023-06-22 14:04:31,1.6776069035433016e-30,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,100,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,200,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+
+2023-06-22 15:34:24,1.6838352732599328e-30,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,100,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,100,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
