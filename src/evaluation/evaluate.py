@@ -20,7 +20,7 @@ class Evaluation:
         if self.model_type == 'regression':
             mse = mean_squared_error(self.y_true, self.y_pred)
             # keep 5 decimal places only
-            metrics = {'MSE': "{:.5f}".format(mse)}
+            metrics = {'MSE': mse}
         else:  # classification
             class_report = classification_report(self.y_true, self.y_pred, output_dict=True)
             metrics = {**class_report['weighted avg'], **class_report['macro avg']}
