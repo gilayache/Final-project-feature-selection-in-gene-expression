@@ -8,7 +8,7 @@ import src.Preprocessing.scaling as scaling
 import src.Preprocessing.encoding as encoding
 import src.models.modeling as modeling
 import src.feature_selection.features_selection as features_selection
-
+from src.evaluation import evaluate
 
 from src import Utils
 from sklearn.model_selection import train_test_split
@@ -28,8 +28,7 @@ class RunPipeline:
         self.df, params = self.load_data_and_params()
         X, y = preprocesing.Preprocessing.create_x_y(self)
         X = preprocesing.Preprocessing.remove_nan_columns(self, X)
-        # todo the below as well ?
-        # preprocesing.Preprocessing.remove_low_variance_columns(self)
+
         X = preprocesing.Preprocessing.remove_constant_columns(self, X)
 
         # Split the data into train+validation and test sets
@@ -46,7 +45,7 @@ class RunPipeline:
         self.features = X_train.columns.to_list()
         self.numerical_features = X_train.select_dtypes("number").columns
         self.categorical_features = X_train.select_dtypes("object").columns
-
+        # todo noa - rename the names of the feature selection steps (from 1, 2 to something more meaningful)
         pipe = Pipeline(steps=[
                     ('Imputation', imputation.Imputer(categorical_features=self.categorical_features,
                                                 numerical_features=self.numerical_features)),
@@ -65,19 +64,20 @@ class RunPipeline:
                     ('Modeling', modeling.Model(model_name=self.model_name))])
 
         # todo: Save the model
-        # since current we are not using the validation set
         pipe.fit(X_train_val, y_train_val)
         y_test_pred = pipe.predict(X_test)
 
+        _evaluate = evaluate.Evaluate(model_type = self.model_type, y_pred=y_test_pred, y_test=self.y_test)
+        _evaluate.run()
         # evaluation
-        if self.model_type == 'regression':
-            mse_test = mean_squared_error(y_test, y_test_pred)
-            print("Test Mean Squared Error:", mse_test)
-        elif self.model_type == 'classification':
-            classification_rep_test = classification_report(y_test, y_test_pred)
-            print("Test Classification Report:\n", classification_rep_test)
-        else:
-            print("Please make sure that the model_type is regression or classification")
+        # if self.model_type == 'regression':
+        #     mse_test = mean_squared_error(y_test, y_test_pred)
+        #     print("Test Mean Squared Error:", mse_test)
+        # elif self.model_type == 'classification':
+        #     classification_rep_test = classification_report(y_test, y_test_pred)
+        #     print("Test Classification Report:\n", classification_rep_test)
+        # else:
+        #     print("Please make sure that the model_type is regression or classification")
 
 
     def load_data_and_params(self):
