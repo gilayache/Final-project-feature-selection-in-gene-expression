@@ -25,7 +25,7 @@ fig = px.scatter(df_filtered, x='Param_fs_method_1', y='Metric_MSE', hover_data=
 fig.add_hline(y=baseline_mse, line_dash="dash", line_color="red", annotation_text="Baseline", annotation_position="bottom right")
 
 # Set plot title and labels
-fig.update_layout(title='MSE vs feature selection methods',
+fig.update_layout(title='For regression:  MSE vs feature selection methods',
                   xaxis_title='First feature selection method',
                   yaxis_title='MSE')
 
