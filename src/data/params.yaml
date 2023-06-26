@@ -13,16 +13,17 @@ alpha: 0.1 # for elastic_net
 l1_ratio: 0.5 # for elastic_net
 C: 0.01 # for elastic_net
 fs_method_1: 'genetic_selection' # "genetic_selection" or "mrmr"
-fs_method_2: 'rfe'
-n_features_to_select: 50 # for rfe, forward_selection and backward_selection
+fs_method_2: None
+n_features_to_select: None # for rfe, forward_selection and backward_selection
 preprocessing_operations: ['remove_constant_columns', 'remove_nan_columns']
 encoder_name: 'OneHotEncoder'
 scaler_name: 'StandardScaler'
+
 # For the genetic algo
 cv: 5
 verbose: 2
-scoring: 'neg_mean_squared_error'
-max_features: 150
+scoring: 'neg_mean_squared_error' # for regression: 'neg_mean_squared_error' or 'accuracy' for classification
+max_features: 35
 n_population: 100
 crossover_proba: 0.5
 mutation_proba: 0.2

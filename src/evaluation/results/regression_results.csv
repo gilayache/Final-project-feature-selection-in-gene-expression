@@ -41,3 +41,14 @@ Time,Metric_MSE,Param_model_type,Param_model_name,Param_columns_to_remove,Param_
 22/06/2023 21:20,0.022331904,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,backward_selection,30,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,40,100,0.5,0.2,7,0.5,0.04,3,4,TRUE,-1
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 22/06/2023 21:31,0.018165342,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,rfe,30,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,40,100,0.5,0.2,7,0.5,0.04,3,4,TRUE,-1
+2023-06-26 18:01:16,0.04925140972954313,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,10,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+,,
+2023-06-26 19:12:19,0.024891203900904324,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,20,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+,,,,,,,,,,,,,,,,,,,,,,,,,
+2023-06-26 19:22:50,0.02057052125377645,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,30,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+
+2023-06-26 19:35:04,1.1563944365357563e-30,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,60,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+,,,
+2023-06-26 19:45:56,6.6724571252781095e-31,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,40,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+
+2023-06-26 20:01:03,0.01837893828665496,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,35,100,0.5,0.2,7,0.5,0.04,3,4,True,-1

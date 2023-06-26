@@ -14,9 +14,15 @@ mask = df['Metric_MSE'] < baseline_mse
 df_filtered = df[mask].drop_duplicates(subset='Metric_MSE').copy()
 
 # Create a new column for hover information
-df_filtered['hover_info'] = 'Number of features for the first feature selection: ' + df_filtered['Param_K'].astype(str) + \
-                            '<br>Second feature selection is: ' + df_filtered['Param_fs_method_2'] + \
-                            ', number of features: ' + df_filtered['Param_n_features_to_select'].astype(str)
+df_filtered['hover_info'] = df_filtered.apply(lambda row: 'Number of features for the first feature selection: ' + str(row['Param_max_features'])
+                                              if row['Param_fs_method_1'] == 'genetic_selection'
+                                              else 'Number of features for the first feature selection: ' + str(row['Param_K']),
+                                              axis=1)
+
+
+
+df_filtered['hover_info'] += '<br>Second feature selection is: ' + df_filtered['Param_fs_method_2'] + \
+                             ', number of features: ' + df_filtered['Param_n_features_to_select'].astype(str)
 
 # Plot the filtered results
 fig = px.scatter(df_filtered, x='Param_fs_method_1', y='Metric_MSE', hover_data=['hover_info'])
@@ -27,7 +33,10 @@ fig.add_hline(y=baseline_mse, line_dash="dash", line_color="red", annotation_tex
 # Set plot title and labels
 fig.update_layout(title='For regression:  MSE vs feature selection methods',
                   xaxis_title='First feature selection method',
-                  yaxis_title='MSE')
+                  yaxis_title='MSE',
+                  height=600,
+                  width=800,
+                  )
 
 # Show the plot
 fig.show()
