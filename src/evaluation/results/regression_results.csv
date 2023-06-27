@@ -50,5 +50,13 @@ Time,Metric_MSE,Param_model_type,Param_model_name,Param_columns_to_remove,Param_
 2023-06-26 19:35:04,1.1563944365357563e-30,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,60,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
 ,,,
 2023-06-26 19:45:56,6.6724571252781095e-31,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,40,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
-
+,,
 2023-06-26 20:01:03,0.01837893828665496,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,35,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+
+2023-06-27 08:29:36,0.02288829828942544,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,38,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+
+2023-06-27 08:44:22,6.1744586933642156e-31,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,39,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+
+2023-06-27 08:57:16,6.3753933967960206e-31,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,rfe,35,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,40,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
+,,,,,,
+2023-06-27 09:08:54,1.0819817668956618e-30,regression,LinearRegression,"['ER', 'samplename']",42,0.3,0.5,Lympho,None,train,200,123,0.1,0.5,0.01,genetic_selection,None,None,"['remove_constant_columns', 'remove_nan_columns']",OneHotEncoder,StandardScaler,5,2,neg_mean_squared_error,40,100,0.5,0.2,7,0.5,0.04,3,4,True,-1
