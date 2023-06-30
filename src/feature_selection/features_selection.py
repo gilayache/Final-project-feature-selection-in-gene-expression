@@ -9,7 +9,7 @@ import lightgbm as lgb
 from tqdm import tqdm
 import eli5
 from eli5.sklearn import PermutationImportance
-from xgboost import XGBRegressor
+from xgboost import XGBRegressor, XGBClassifier
 from sklearn.metrics import make_scorer, mean_squared_error, f1_score
 from sklearn.model_selection import cross_val_score
 from sklearn.utils.multiclass import type_of_target
