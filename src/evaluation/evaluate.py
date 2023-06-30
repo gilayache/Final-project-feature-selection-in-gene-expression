@@ -53,7 +53,15 @@ class Evaluation:
             existing_df = pd.read_csv(path)
 
             # Adjust 'Time' column to desired format
-            existing_df['Time'] = pd.to_datetime(existing_df['Time']).dt.strftime('%Y-%m-%d %H:%M:%S')
+            try:
+                existing_df['Time'] = pd.to_datetime(existing_df['Time']).dt.strftime('%Y-%m-%d %H:%M:%S')
+            except ValueError:
+                try:
+                    existing_df['Time'] = pd.to_datetime(existing_df['Time'], format='%d/%m/%Y %H:%M').dt.strftime(
+                        '%Y-%m-%d %H:%M:%S')
+                except ValueError:
+                    # handle the case where the time data cannot be converted to any known format
+                    pass
 
             # Ensure the DataFrame to be appended has the same column order as the existing CSV
             df = df[existing_df.columns]

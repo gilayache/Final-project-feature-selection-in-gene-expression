@@ -18,6 +18,8 @@ mrmr_selection
 PyYAML
 sklearn-genetic
 lightgbm
+eli5
+xgboost
 
 # backwards compatibility
 pathlib2

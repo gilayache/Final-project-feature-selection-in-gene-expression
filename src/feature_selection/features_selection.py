@@ -7,6 +7,12 @@ import numpy as np
 import pandas as pd
 import lightgbm as lgb
 from tqdm import tqdm
+import eli5
+from eli5.sklearn import PermutationImportance
+from xgboost import XGBRegressor
+from sklearn.metrics import make_scorer, mean_squared_error, f1_score
+from sklearn.model_selection import cross_val_score
+from sklearn.utils.multiclass import type_of_target
 
 # Scikit-learn related imports
 from sklearn.linear_model import ElasticNet, LogisticRegression, LinearRegression
@@ -18,7 +24,6 @@ from sklearn.feature_selection import RFE
 # Other third-party library imports
 from mrmr import mrmr_classif, mrmr_regression
 from genetic_selection import GeneticSelectionCV
-
 
 
 start_time = time.time()
@@ -322,6 +327,33 @@ class FeaturesSelection:
 
         return selected_features
 
+    def feature_importance(self, X: pd.DataFrame, y: pd.Series):
+        """
+        Train an XGBoost model and use eli5 to compute and visualize feature importance.
+        :param X: DataFrame of features
+        :param y: Series of target variable
+        :return: The feature importance
+        """
+
+        # Determine if task is regression or classification
+        task = type_of_target(y)
+
+        if 'continuous' in task:
+            model = XGBRegressor()
+            scorer = make_scorer(mean_squared_error, greater_is_better=False)
+        else:
+            model = XGBClassifier()
+            scorer = make_scorer(f1_score, greater_is_better=True)
+
+        # Fit your model
+        model.fit(X, y)
+
+        # Create the eli5 PermutationImportance object and compute importances
+        perm = PermutationImportance(model, random_state=1, scoring=scorer).fit(X, y)
+
+        # Print the feature importances
+        print(eli5.format_as_text(eli5.explain_weights(perm, feature_names=X.columns.tolist())))
+
     def fit(self, X: pd.DataFrame, y: pd.Series):
         """
         Applying the feature selection method and return all the feature selection parameters
@@ -345,6 +377,10 @@ class FeaturesSelection:
             print(f'Shape of X after {self.fs_method_2}: {X.shape}')
 
         self.final_selected_features = X.columns.tolist()
+
+        # Feature Importance
+        X_selected = X[self.final_selected_features]
+        self.feature_importance(X_selected, y)
 
         return self
 

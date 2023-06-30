@@ -20,9 +20,11 @@ df_filtered['hover_info'] = df_filtered.apply(lambda row: 'Number of features fo
                                               axis=1)
 
 
+df_filtered['hover_info'] += df_filtered.apply(lambda row: '<br>Second feature selection is: None'
+                                               if pd.isnull(row['Param_fs_method_2'])
+                                               else '<br>Second feature selection is: ' + row['Param_fs_method_2'] +
+                                               ', number of features: ' + str(row['Param_n_features_to_select']), axis=1)
 
-df_filtered['hover_info'] += '<br>Second feature selection is: ' + df_filtered['Param_fs_method_2'] + \
-                             ', number of features: ' + df_filtered['Param_n_features_to_select'].astype(str)
 
 # Plot the filtered results
 fig = px.scatter(df_filtered, x='Param_fs_method_1', y='Metric_MSE', hover_data=['hover_info'])
