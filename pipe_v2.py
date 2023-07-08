@@ -67,17 +67,9 @@ class RunPipeline:
         pipe.fit(X_train_val, y_train_val)
         y_test_pred = pipe.predict(X_test)
 
-        _evaluate = evaluate.Evaluate(model_type = self.model_type, y_pred=y_test_pred, y_test=self.y_test)
+        _evaluate = evaluate.Evaluate(model_type = self.model_type, y_pred=y_test_pred, y_test=y_test)
         _evaluate.run()
-        # evaluation
-        # if self.model_type == 'regression':
-        #     mse_test = mean_squared_error(y_test, y_test_pred)
-        #     print("Test Mean Squared Error:", mse_test)
-        # elif self.model_type == 'classification':
-        #     classification_rep_test = classification_report(y_test, y_test_pred)
-        #     print("Test Classification Report:\n", classification_rep_test)
-        # else:
-        #     print("Please make sure that the model_type is regression or classification")
+
 
 
     def load_data_and_params(self):

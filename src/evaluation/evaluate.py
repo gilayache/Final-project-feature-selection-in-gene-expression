@@ -15,32 +15,35 @@ class Evaluate():
         self.y_test = y_test
         self.y_pred = y_pred
 
-        def run():
-            """
+    def run(self):
+        """
 
-            """
-            result = evaluate()
-            export_results(result)
+        """
+        result = self.evaluate()
+        self.export_results(result)
 
-        def evaluate(self):
-            """
 
-            """
-            if self.model_type == 'regression':
-                mse_test = mean_squared_error(self.y_test, self.y_pred)
-                print("Test Mean Squared Error:", mse_test)
-            elif self.model_type == 'classification':
-                classification_rep_test = classification_report(self.y_test, self.y_pred)
-                print("Test Classification Report:\n", classification_rep_test)
-            else:
-                print("Please make sure that the model_type is regression or classification")
+    def evaluate(self):
+        """
 
-        def export_results(self, res):
-            """
+        """
+        if self.model_type == 'regression':
+            mse_test = mean_squared_error(self.y_test, self.y_pred)
+            print("Test Mean Squared Error:", mse_test)
+            return mse_test
+        elif self.model_type == 'classification':
+            classification_rep_test = classification_report(self.y_test, self.y_pred)
+            print("Test Classification Report:\n", classification_rep_test)
+            return classification_rep_test
+        else:
+            print("Please make sure that the model_type is regression or classification")
 
-            """
-            res = res
-            current_date = datetime.datetime.now()
-            with open(f'results_{self.model_type}_{current_date}.csv', 'a', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(res)
+    def export_results(self, res):
+        """
+
+        """
+        res = res
+        current_date = datetime.now()
+        with open(f'results_{self.model_type}_{current_date}.csv', 'a', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(res)
