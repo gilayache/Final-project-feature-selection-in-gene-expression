@@ -10,6 +10,8 @@ import src.models.modeling as modeling
 import src.feature_selection.features_selection as features_selection
 from src.evaluation import evaluate
 
+import src.evaluation.evaluate as evaluation
+
 from src import Utils
 from sklearn.model_selection import train_test_split
 
@@ -55,22 +57,56 @@ class RunPipeline:
                                                                                   fs_method_2=None,
                                                                                   model_type=self.model_type,
                                                                                   K=self.K,
-                                                                                  random_state=self.seed)),
-                    ('Features Selection 2', features_selection.FeaturesSelection(fs_method_2=self.fs_method_2,
-                                                                                  fs_method_1= None,
-                                                                                  model_type=self.model_type,
                                                                                   random_state=self.seed,
-                                                                                  n_features_to_select=self.n_features_to_select)),
+                                                                                  alpha = self.alpha,
+                                                                                  l1_ratio=self.l1_ratio,
+                                                                                  C=self.C,
+                                                                                  n_features_to_select=self.n_features_to_select,
+                                                                                  cv=self.cv,
+                                                                                  verbose=self.verbose,
+                                                                                  scoring=self.scoring,
+                                                                                  max_features=self.max_features,
+                                                                                  n_population=self.n_population,
+                                                                                  crossover_proba=self.crossover_proba,
+                                                                                  mutation_proba=self.mutation_proba,
+                                                                                  n_generations=self.n_generations,
+                                                                                  crossover_independent_proba=self.crossover_independent_proba,
+                                                                                  mutation_independent_proba=self.mutation_independent_proba,
+                                                                                  tournament_size=self.tournament_size,
+                                                                                  n_gen_no_change=self.n_gen_no_change,
+                                                                                  caching=self.caching,
+                                                                                  n_jobs=self.n_jobs)),
+                    # ('Features Selection 2', features_selection.FeaturesSelection(fs_method_2=self.fs_method_2,
+                    #                                                               fs_method_1= None,
+                    #                                                               model_type=self.model_type,
+                    #                                                               K=self.K,
+                    #                                                               random_state=self.seed,
+                    #                                                               alpha=self.alpha,
+                    #                                                               l1_ratio=self.l1_ratio,
+                    #                                                               C=self.C,
+                    #                                                               n_features_to_select=self.n_features_to_select,
+                    #                                                               cv=self.cv,
+                    #                                                               verbose=self.verbose,
+                    #                                                               scoring=self.scoring,
+                    #                                                               max_features=self.max_features,
+                    #                                                               n_population=self.n_population,
+                    #                                                               crossover_proba=self.crossover_proba,
+                    #                                                               mutation_proba=self.mutation_proba,
+                    #                                                               n_generations=self.n_generations,
+                    #                                                               crossover_independent_proba=self.crossover_independent_proba,
+                    #                                                               mutation_independent_proba=self.mutation_independent_proba,
+                    #                                                               tournament_size=self.tournament_size,
+                    #                                                               n_gen_no_change=self.n_gen_no_change,
+                    #                                                               caching=self.caching,
+                    #                                                               n_jobs=self.n_jobs)),
                     ('Modeling', modeling.Model(model_name=self.model_name))])
 
-        # todo: Save the model
+        # since current we are not using the validation set
         pipe.fit(X_train_val, y_train_val)
         y_test_pred = pipe.predict(X_test)
-
-        _evaluate = evaluate.Evaluate(model_type = self.model_type, y_pred=y_test_pred, y_test=y_test)
-        _evaluate.run()
-
-
+        # evaluate and write the results to csv
+        evaluator = evaluation.Evaluation(self.model_type, y_test, y_test_pred, params)
+        evaluator.evaluate()
 
     def load_data_and_params(self):
 
