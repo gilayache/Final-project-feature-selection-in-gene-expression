@@ -14,25 +14,6 @@ class Preprocessing:
         self.categorical_features = []
         self.preprocessing_operations = preprocessing_operations
         self.df = df
-    #
-    # def fit(self, X, y=None):
-    #     """
-    #
-    #     """
-    #
-    #     for method_name in self.list_of_methods:
-    #         if method_name in self.preprocessing_operations:
-    #                 getattr(self, method_name)()
-    #                 # method()
-    #
-    # def transform(self, X,y=None):
-    #     """
-    #
-    #     """
-    #     for method_name in self.list_of_methods:
-    #         if method_name in self.preprocessing_operation:
-    #                 getattr(self, method_name)()
-    #                 # method()
 
     def remove_constant_columns(self, X):
         """

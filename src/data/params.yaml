@@ -15,7 +15,7 @@ C: 0.01 # for elastic_net
 fs_method_1: "genetic_selection" # "genetic_selection" or "mrmr"
 fs_method_2: None # rfe, forward_selection, backward_selection or elastic_net
 n_features_to_select: None # for rfe, forward_selection and backward_selection
-preprocessing_operations: ['remove_constant_columns', 'remove_nan_columns']
+preprocessing_operations: ['remove_constant_columns', 'remove_nan_columns',"create_x_y"]
 encoder_name: 'OneHotEncoder'
 scaler_name: 'StandardScaler'
 
