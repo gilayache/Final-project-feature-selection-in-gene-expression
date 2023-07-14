@@ -1,36 +1,59 @@
-model_type: 'regression'
+#model_type: 'regression'
 model_name: 'LinearRegression'
-columns_to_remove : ["ER","PAM50","time","event","Lympho","cluster2","LumA_target"] # do not change this one for this dataset.
+columns_to_remove : ["ER","PAM50","time","event","Lympho","cluster2"] #,"LumA_target"] # do not change this one for this dataset.
 seed: 42
 test_size: 0.3
 val_size: 0.5
 target_col: 'Lympho' # Lympho ER or LumA_target
 output_path: None
 run_type: 'train'
-K: 400 # for mrmr
-random_state: 123
-alpha: 0.1 # for elastic_net
-l1_ratio: 0.5 # for elastic_net
-C: 0.01 # for elastic_net
-fs_method_1: "mrmr" # "genetic_selection" or "mrmr"
+fs_params:
+  K: 400 # for mrmr
+  fs_method_1: "mrmr" # "genetic_selection" or "mrmr"
+  model_type: 'regression'
+#  seed: 42
+  alpha: 0.1 # for elastic_net
+  l1_ratio: 0.5 # for elastic_net
+  C: 0.01 # for elastic_net
+  n_features_to_select: None # for rfe, forward_selection and backward_selection
+  cv: 5
+  verbose: 2
+  scoring: 'neg_mean_squared_error' # for regression: 'neg_mean_squared_error' or 'accuracy' for classification
+  max_features: 200
+  n_population: 100
+  crossover_proba: 0.5
+  mutation_proba: 0.2
+  n_generations: 7
+  crossover_independent_proba: 0.5
+  mutation_independent_proba: 0.04
+  tournament_size: 3
+  n_gen_no_change: 4
+  caching: True
+  n_jobs: -1
+  random_state: 123
 fs_method_2: None # rfe, forward_selection, backward_selection or elastic_net
-n_features_to_select: None # for rfe, forward_selection and backward_selection
+#n_features_to_select: None # for rfe, forward_selection and backward_selection
 preprocessing_operations: ['remove_constant_columns', 'remove_nan_columns',"create_x_y"]
 encoder_name: 'OneHotEncoder'
 scaler_name: 'StandardScaler'
+hyper_params_dict:
+  # the below params are relevant for linear regression
+  fit_intercept: [True, False]
+  n_jobs: [2, 4]
+  # the below params are relevant for logistic regression
 
 # For the genetic algo
-cv: 5
-verbose: 2
-scoring: 'neg_mean_squared_error' # for regression: 'neg_mean_squared_error' or 'accuracy' for classification
-max_features: 200
-n_population: 100
-crossover_proba: 0.5
-mutation_proba: 0.2
-n_generations: 7
-crossover_independent_proba: 0.5
-mutation_independent_proba: 0.04
-tournament_size: 3
-n_gen_no_change: 4
-caching: True
-n_jobs: -1
+#cv: 5
+#verbose: 2
+#scoring: 'neg_mean_squared_error' # for regression: 'neg_mean_squared_error' or 'accuracy' for classification
+#max_features: 200
+#n_population: 100
+#crossover_proba: 0.5
+#mutation_proba: 0.2
+#n_generations: 7
+#crossover_independent_proba: 0.5
+#mutation_independent_proba: 0.04
+#tournament_size: 3
+#n_gen_no_change: 4
+#caching: True
+#n_jobs: -1
