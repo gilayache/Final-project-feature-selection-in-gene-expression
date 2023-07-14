@@ -44,8 +44,8 @@ class Preprocessing:
         """
 
         """
-        if self.run_type == 'train':
-            _orig_features = self.df.columns.drop(self.columns_to_remove).to_list()
+        # todo: we failed because 'LumA_target' was not in self.df --> i removed it from the params - ask gil about it
+        _orig_features = self.df.columns.drop(self.columns_to_remove).to_list()
 
         X = self.df[_orig_features]
         y = self.df[self.target_col]
