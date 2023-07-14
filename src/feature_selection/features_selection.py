@@ -33,7 +33,7 @@ class FeaturesSelection:
     This class is responsible for feature selection. Each method returns the selected features
     """
 
-    def __init__(self, fs_method_1: str,fs_method_2:str, model_type: str, K: int, random_state: int, alpha: float,
+    def __init__(self, fs_method_1: str, model_type: str, K: int, random_state: int, alpha: float,
                  l1_ratio: float , C: float , n_features_to_select:int,
                  cv: int, verbose: int,
                  scoring: str,
@@ -47,7 +47,7 @@ class FeaturesSelection:
                  tournament_size: int,
                  n_gen_no_change: int,
                  caching: bool,
-                 n_jobs: int):
+                 n_jobs: int, fs_method_2:str = None):
         """
         :param fs_method_1: the first method of the feature selection
         :param fs_method_2: the second method of the feature selection
@@ -106,13 +106,11 @@ class FeaturesSelection:
         :param y: the target col
         :return: List of selected features (the top K features)
         """
-
+        print("Running the mrr: ")
         if self.model_type == "classification":
-            print("Running the mrr: ")
             selected_features = mrmr_classif(X=X, y=y, K=self.K)
 
         elif self.model_type == "regression":
-            print("Running the mrr: ")
             selected_features = mrmr_regression(X=X, y=y, K=self.K)
 
         return selected_features
@@ -285,6 +283,7 @@ class FeaturesSelection:
         selector = GeneticSelectionCV(estimator,
                                       cv=self.cv,
                                       verbose=self.verbose,
+                                      # todo: why are we using below self.scoring and not the above scoring? should we delete it?
                                       scoring=self.scoring,
                                       max_features=self.max_features,
                                       n_population=self.n_population,
