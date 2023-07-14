@@ -1,21 +1,21 @@
 model_type: 'regression'
 model_name: 'LinearRegression'
-columns_to_remove : ["ER", "samplename"]
+columns_to_remove : ["ER","PAM50","time","event","Lympho","cluster2","LumA_target"] # do not change this one for this dataset.
 seed: 42
 test_size: 0.3
 val_size: 0.5
-target_col: 'Lympho'
+target_col: 'Lympho' # Lympho ER or LumA_target
 output_path: None
 run_type: 'train'
-K: 10 # for mrr
+K: 400 # for mrmr
 random_state: 123
 alpha: 0.1 # for elastic_net
 l1_ratio: 0.5 # for elastic_net
 C: 0.01 # for elastic_net
-fs_method_1: 'mrmr' # "genetic_selection" or "mrmr"
-fs_method_2: None # rfe, forward_selection and backward_selection
+fs_method_1: "mrmr" # "genetic_selection" or "mrmr"
+fs_method_2: None # rfe, forward_selection, backward_selection or elastic_net
 n_features_to_select: None # for rfe, forward_selection and backward_selection
-preprocessing_operations: ['remove_constant_columns', 'remove_nan_columns']
+preprocessing_operations: ['remove_constant_columns', 'remove_nan_columns',"create_x_y"]
 encoder_name: 'OneHotEncoder'
 scaler_name: 'StandardScaler'
 
@@ -23,7 +23,7 @@ scaler_name: 'StandardScaler'
 cv: 5
 verbose: 2
 scoring: 'neg_mean_squared_error' # for regression: 'neg_mean_squared_error' or 'accuracy' for classification
-max_features: 40
+max_features: 200
 n_population: 100
 crossover_proba: 0.5
 mutation_proba: 0.2
