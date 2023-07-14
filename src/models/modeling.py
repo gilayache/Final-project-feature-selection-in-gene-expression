@@ -1,3 +1,7 @@
+import pandas as pd
+from sklearn.linear_model import LogisticRegression, LinearRegression
+
+
 class Model:
 
     def __init__(self, model_name: str):
@@ -8,7 +12,6 @@ class Model:
     def fit(self, X, y=None):
         """
         """
-        import pandas as pd
         if type(y) != pd.Series: # todo: change it to == np.array/np.ndarray
             y = y.reshape(-1, 1)
 
@@ -36,8 +39,6 @@ class Model:
     def InitModel(self, model_name):
         """
         """
-        from sklearn.linear_model import LogisticRegression, LinearRegression
-
         if model_name == 'LogisticRegression':
             model = LogisticRegression()
 
