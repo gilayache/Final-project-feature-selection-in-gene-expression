@@ -54,7 +54,7 @@ class RunPipeline:
                     ('Encoding', encoding.Encoder(encoder_name=self.encoder_name, features=self.features)),
                     ('Scaling', scaling.Scaler(scaler_name=self.scaler_name)),
                     ('Features Selection 1', features_selection.FeaturesSelection(**self.fs_params)),
-                    ('Features Selection 2', features_selection.FeaturesSelection(**self.fs_params)),
+                    # ('Features Selection 2', features_selection.FeaturesSelection(**self.fs_params)),
                     ('Modeling', modeling.Model(model_name=self.model_name, val_size=self.val_size, seed=self.seed,
                                                 hyper_params_dict=self.hyper_params_dict,
                                                 n_jobs=self.n_jobs,

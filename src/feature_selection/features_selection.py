@@ -36,7 +36,6 @@ class FeaturesSelection:
     def __init__(self, fs_method_1: str, model_type: str, K: int, random_state: int, alpha: float,
                  l1_ratio: float , C: float , n_features_to_select:int,
                  cv: int, verbose: int,
-                 scoring: str,
                  max_features: int,
                  n_population: int,
                  crossover_proba: float,
@@ -61,7 +60,6 @@ class FeaturesSelection:
         :param n_features_to_select: Number of features to select (for rfe, forward or backward).
         :param cv: The cross-validation splitting strategy for GeneticSelectionCV.
         :param verbose: Controls the verbosity of GeneticSelectionCV.
-        :param scoring: Scoring parameter for GeneticSelectionCV.
         :param max_features: Maximum number of features to select in GeneticSelectionCV.
         :param n_population: Size of the population in GeneticSelectionCV.
         :param crossover_proba: Crossover probability in GeneticSelectionCV.
@@ -85,7 +83,6 @@ class FeaturesSelection:
         self.n_features_to_select = n_features_to_select
         self.cv = cv
         self.verbose = verbose
-        self.scoring = scoring
         self.max_features = max_features
         self.n_population = n_population
         self.crossover_proba = crossover_proba
@@ -270,6 +267,8 @@ class FeaturesSelection:
         :param X: X - should be completely numerical
         :param y: the target col
         :return: List of selected features
+        :param scoring: Scoring parameter for GeneticSelectionCV.
+
         """
 
         # Instantiate the estimator according to the problem type
@@ -283,8 +282,7 @@ class FeaturesSelection:
         selector = GeneticSelectionCV(estimator,
                                       cv=self.cv,
                                       verbose=self.verbose,
-                                      # todo: why are we using below self.scoring and not the above scoring? should we delete it?
-                                      scoring=self.scoring,
+                                      scoring=scoring,
                                       max_features=self.max_features,
                                       n_population=self.n_population,
                                       crossover_proba=self.crossover_proba,
