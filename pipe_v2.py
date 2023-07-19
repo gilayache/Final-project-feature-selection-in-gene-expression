@@ -56,7 +56,10 @@ class RunPipeline:
                     ('Features Selection 1', features_selection.FeaturesSelection(**self.fs_params)),
                     # ('Features Selection 2', features_selection.FeaturesSelection(**self.fs_params_2)),
                     ('Modeling', modeling.Model(model_name=self.model_name, val_size=self.val_size, seed=self.seed,
-                                                hyper_params_dict=self.hyper_params_dict))])
+                                                hyper_params_dict=self.hyper_params_dict,
+                                                n_jobs=self.n_jobs,
+                                                fit_intercept=self.fit_intercept
+                                                ))])
 
         # since current we are not using the validation set
         pipe.fit(X_train_val, y_train_val)

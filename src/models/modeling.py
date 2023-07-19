@@ -6,10 +6,10 @@ from sklearn.model_selection import train_test_split
 
 class Model:
 
-    def __init__(self, model_name: str, val_size, seed, hyper_params_dict):
+    def __init__(self, model_name: str, val_size, seed, hyper_params_dict,n_jobs,fit_intercept):
         """
         """
-        self.model = self.InitModel(model_name)
+        self.model = self.InitModel(model_name, n_jobs, fit_intercept)
         self.val_size = val_size
         self.seed = seed
         self.hyper_params_dict = hyper_params_dict
@@ -29,6 +29,12 @@ class Model:
                                                           random_state=self.seed)
 
         best_params = self.apply_hyper_param(X_val, y_val)
+
+        # since these params can not be in the fit function
+        params_to_remove = ['n_jobs', 'fit_intercept']
+        for param in params_to_remove:
+            best_params.pop(param, None)
+
         print('start model fit')
         self.model.fit(X, y, **best_params)
 
@@ -49,14 +55,14 @@ class Model:
 
         return y_pred
 
-    def InitModel(self, model_name):
+    def InitModel(self, model_name, fit_intercept, n_jobs):
         """
         """
         if model_name == 'LogisticRegression':
-            model = LogisticRegression()
+            model = LogisticRegression(n_jobs=n_jobs, fit_intercept=fit_intercept)
 
         elif model_name == 'LinearRegression':
-            model = LinearRegression()
+            model = LinearRegression(fit_intercept=fit_intercept)
 
         return model
 

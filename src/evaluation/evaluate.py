@@ -52,6 +52,11 @@ class Evaluation:
             # Load the existing CSV file
             existing_df = pd.read_csv(path)
 
+            # Add missing columns to existing_df
+            for column in df.columns:
+                if column not in existing_df.columns:
+                    existing_df[column] = None
+
             # Adjust 'Time' column to desired format
             try:
                 existing_df['Time'] = pd.to_datetime(existing_df['Time']).dt.strftime('%Y-%m-%d %H:%M:%S')
@@ -63,16 +68,12 @@ class Evaluation:
                     # handle the case where the time data cannot be converted to any known format
                     pass
 
-            # Ensure the DataFrame to be appended has the same column order as the existing CSV
-            df = df[existing_df.columns]
+            # concat df to the existing_df
+            existing_df = pd.concat([existing_df, df], ignore_index=True)
 
-            # Check if the file ends with a newline, if not, add it
-            with open(path, 'rb+') as f:
-                f.seek(-2, os.SEEK_END)
-                if f.read(2) != b'\n':
-                    f.write(b'\n')
 
-            # Append DataFrame to the CSV file
-            df.to_csv(path, mode='a', header=False, index=False)
+            # Save existing_df to the CSV file
+            existing_df.to_csv(path, index=False)
         else:
             df.to_csv(path, index=False)
+

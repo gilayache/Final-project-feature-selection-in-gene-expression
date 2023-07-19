@@ -1,14 +1,16 @@
-#model_type: 'regression'
+model_type: 'regression'
 model_name: 'LinearRegression'
-columns_to_remove : ["ER","PAM50","time","event","Lympho","cluster2"] #,"LumA_target"] # do not change this one for this dataset.
+columns_to_remove : ["ER","PAM50","time","event","Lympho","cluster2","LumA_target"] # do not change this one for this dataset.
 seed: 42
 test_size: 0.3
 val_size: 0.5
 target_col: 'Lympho' # Lympho ER or LumA_target
 output_path: None
 run_type: 'train'
+n_jobs: -1 # for modeling (baseline)
+fit_intercept: True # for modeling (baseline)
 fs_params:
-  K: 400 # for mrmr
+  K: 200 # for mrmr
   fs_method_1: "mrmr" # "genetic_selection" or "mrmr"
   model_type: 'regression'
 #  seed: 42
