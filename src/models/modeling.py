@@ -31,9 +31,10 @@ class Model:
         best_params = self.apply_hyper_param(X_val, y_val)
 
         # since these params can not be in the fit function
-        params_to_remove = ['n_jobs', 'fit_intercept']
-        for param in params_to_remove:
-            best_params.pop(param, None)
+
+        # params_to_remove = ['n_jobs', 'fit_intercept']
+        # for param in params_to_remove:
+        #     best_params.pop(param, None)
 
         print('start model fit')
         self.model.fit(X, y, **best_params)
