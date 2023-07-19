@@ -10,7 +10,7 @@ run_type: 'train'
 n_jobs: -1 # for modeling (baseline)
 fit_intercept: True # for modeling (baseline)
 fs_params:
-  K: 200 # for mrmr
+  K: 10 # for mrmr
   fs_method_1: "mrmr" # "genetic_selection" or "mrmr"
   model_type: 'regression'
 #  seed: 42
