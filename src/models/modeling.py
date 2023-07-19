@@ -29,7 +29,7 @@ class Model:
                                                           random_state=self.seed)
 
         best_params = self.apply_hyper_param(X_val, y_val)
-
+        print(best_params)
         # since these params can not be in the fit function
 
         # params_to_remove = ['n_jobs', 'fit_intercept']
