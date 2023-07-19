@@ -42,4 +42,7 @@ hyper_params_dict:
   fit_intercept: [True, False]
   n_jobs: [2, 4]
   # the below params are relevant for logistic regression
+  C: [0.001, 0.01, 0.1, 1, 10, 100]
+  penalty: ['l1', 'l2', 'elasticnet', 'none']
+  solver: ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
 
