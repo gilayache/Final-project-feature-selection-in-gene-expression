@@ -73,4 +73,3 @@ class Model:
         search = clf.fit(X, y)
         best_params = search.best_params_
         return best_params
-
