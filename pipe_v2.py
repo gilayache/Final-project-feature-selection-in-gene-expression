@@ -51,9 +51,8 @@ class RunPipeline:
                     ('Modeling', modeling.Model(model_name=self.model_name, val_size=self.val_size, seed=self.seed,
                                                 hyper_params_dict=self.hyper_params_dict
                                                 ))])
-
-        # since current we are not using the validation set
-        pipe.fit(X_train, y_train)
+        # Using the val in the modeling for the hyper param
+        pipe.fit(X_train_val, y_train_val)
         y_test_pred = pipe.predict(X_test)
         # evaluate and write the results to csv
         evaluator = evaluation.Evaluation(self.model_type, y_test, y_test_pred, params)
