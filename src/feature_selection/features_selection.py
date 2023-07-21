@@ -10,21 +10,16 @@ from tqdm import tqdm
 import eli5
 from eli5.sklearn import PermutationImportance
 from xgboost import XGBRegressor, XGBClassifier
-from sklearn.metrics import make_scorer, mean_squared_error, f1_score
-from sklearn.model_selection import cross_val_score
 from sklearn.utils.multiclass import type_of_target
 
 # Scikit-learn related imports
 from sklearn.linear_model import ElasticNet, LogisticRegression, LinearRegression
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.metrics import f1_score, mean_squared_error
+from sklearn.metrics import f1_score, mean_squared_error,make_scorer
 from sklearn.feature_selection import RFE
 
 # Other third-party library imports
 from mrmr import mrmr_classif, mrmr_regression
 from genetic_selection import GeneticSelectionCV
-
 
 start_time = time.time()
 

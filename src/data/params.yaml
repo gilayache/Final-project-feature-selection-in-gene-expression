@@ -32,7 +32,7 @@ fs_params:
   caching: True
   n_jobs: -1
   random_state: 123
-#  fs_method_2: "rfe" # rfe, forward_selection, backward_selection or elastic_net
+  fs_method_2:  # rfe, forward_selection, backward_selection or elastic_net
   n_features_to_select: 5 # for rfe, forward_selection and backward_selection
 preprocessing_operations: ['remove_constant_columns', 'remove_nan_columns',"create_x_y"]
 encoder_name: 'OneHotEncoder'
