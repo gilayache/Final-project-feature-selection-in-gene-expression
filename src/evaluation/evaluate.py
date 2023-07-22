@@ -27,6 +27,7 @@ class Evaluation:
             metrics = {key: "{:.5f}".format(value) for key, value in metrics.items()}
 
         evaluation_results.update({'Metric_' + key: value for key, value in metrics.items()})
+        # todo noa: create below a condition that if type(val)!=dict than do that else get the deeper layer of the param (another for k,v)
         evaluation_results.update({'Param_' + key: value for key, value in self.params.items()})
 
         self._write_to_csv(evaluation_results)
