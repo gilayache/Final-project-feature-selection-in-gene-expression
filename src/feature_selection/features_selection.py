@@ -90,6 +90,54 @@ class FeaturesSelection:
         self.caching = caching
         self.n_jobs = n_jobs
 
+
+    def fit(self, X: pd.DataFrame, y: pd.Series):
+        """
+        Applying the feature selection method and return all the feature selection parameters
+        including the features names.
+        """
+        self.selected_features_1 = None
+        self.selected_features_2 = None
+
+        print(f"Size of X before feature selection: {X.shape}")
+
+        if self.fs_method_1:
+            self.selected_features_1 = self._apply_fs_method(X, y, self.fs_method_1)
+            print(f'Number of features after {self.fs_method_1}: {len(self.selected_features_1)}')
+            X = X[self.selected_features_1]  # filter the data with the selected features
+            print(f'Shape of X after {self.fs_method_1}: {X.shape}')
+
+        if self.fs_method_2:
+            self.selected_features_2 = self._apply_fs_method(X, y, self.fs_method_2)
+            print(f'Number of features after {self.fs_method_2}: {len(self.selected_features_2)}')
+            X = X[self.selected_features_2]  # filter the data with the selected features
+            print(f'Shape of X after {self.fs_method_2}: {X.shape}')
+
+        self.final_selected_features = X.columns.tolist()
+
+        # Feature Importance
+        X_selected = X[self.final_selected_features]
+        self.feature_importance(X_selected, y)
+
+        return self
+
+    def transform(self, X: pd.DataFrame):
+        """
+        Return the filtered dataframe after the feature selection applied
+        """
+        # Filter the DataFrame based on the selected features from each method, if they are defined
+        if self.selected_features_1 is not None:
+            X = X[self.selected_features_1]
+
+        if self.selected_features_2 is not None:
+            X = X[self.selected_features_2]
+
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"The feature selection was done successfully in {elapsed_time:.2f} seconds")
+
+        return X
+
     def mrmr(self, X: pd.DataFrame, y: pd.Series) -> List:
         """
         MRMR (Maximum Relevance Minimum Redundancy) selects informative and non-redundant features by ranking them according
@@ -346,52 +394,6 @@ class FeaturesSelection:
         # Print the feature importances
         print(eli5.format_as_text(eli5.explain_weights(perm, feature_names=X.columns.tolist())))
 
-    def fit(self, X: pd.DataFrame, y: pd.Series):
-        """
-        Applying the feature selection method and return all the feature selection parameters
-        including the features names.
-        """
-        self.selected_features_1 = None
-        self.selected_features_2 = None
-
-        print(f"Size of X before feature selection: {X.shape}")
-
-        if self.fs_method_1:
-            self.selected_features_1 = self._apply_fs_method(X, y, self.fs_method_1)
-            print(f'Number of features after {self.fs_method_1}: {len(self.selected_features_1)}')
-            X = X[self.selected_features_1]  # filter the data with the selected features
-            print(f'Shape of X after {self.fs_method_1}: {X.shape}')
-
-        if self.fs_method_2:
-            self.selected_features_2 = self._apply_fs_method(X, y, self.fs_method_2)
-            print(f'Number of features after {self.fs_method_2}: {len(self.selected_features_2)}')
-            X = X[self.selected_features_2]  # filter the data with the selected features
-            print(f'Shape of X after {self.fs_method_2}: {X.shape}')
-
-        self.final_selected_features = X.columns.tolist()
-
-        # Feature Importance
-        X_selected = X[self.final_selected_features]
-        self.feature_importance(X_selected, y)
-
-        return self
-
-    def transform(self, X: pd.DataFrame):
-        """
-        Return the filtered dataframe after the feature selection applied
-        """
-        # Filter the DataFrame based on the selected features from each method, if they are defined
-        if self.selected_features_1 is not None:
-            X = X[self.selected_features_1]
-
-        if self.selected_features_2 is not None:
-            X = X[self.selected_features_2]
-
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        print(f"The feature selection was done successfully in {elapsed_time:.2f} seconds")
-
-        return X
 
 
 
