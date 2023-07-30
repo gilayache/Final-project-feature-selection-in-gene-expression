@@ -19,7 +19,6 @@ class Evaluation:
 
         if self.model_type == 'regression':
             mse = mean_squared_error(self.y_true, self.y_pred)
-            # keep 5 decimal places only
             metrics = {'MSE': mse}
         else:  # classification
             class_report = classification_report(self.y_true, self.y_pred, output_dict=True)
@@ -27,7 +26,14 @@ class Evaluation:
             metrics = {key: "{:.5f}".format(value) for key, value in metrics.items()}
 
         evaluation_results.update({'Metric_' + key: value for key, value in metrics.items()})
-        evaluation_results.update({'Param_' + key: value for key, value in self.params.items()})
+
+        # Add other parameters to evaluation_results directly
+        for key, value in self.params.items():
+            if key != 'fs_params':
+                evaluation_results.update({key: value})
+            else:  # if the parameter is 'fs_params', flatten the dictionary before adding to evaluation_results
+                for fs_key, fs_value in value.items():
+                    evaluation_results.update({'fs_params_' + fs_key: fs_value})
 
         self._write_to_csv(evaluation_results)
 
