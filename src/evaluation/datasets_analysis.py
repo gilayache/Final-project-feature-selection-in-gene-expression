@@ -1,18 +1,70 @@
-from sklearn.model_selection import train_test_split
-import pandas as pd
 from sklearn.metrics import f1_score, mean_squared_error
+from src.Preprocessing.preprocesing import Preprocessing
 from pipe_v2 import RunPipeline
 from tqdm import tqdm
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+import pandas as pd
+
+import src.Preprocessing.encoding as encoding
+import src.Preprocessing.imputation as imputation
+import src.Preprocessing.scaling as scaling
+import src.feature_selection.features_selection as features_selection
+import src.models.modeling as modeling
 
 
 def run_pipeline_and_evaluate(params_path, input_data_path):
     run_pipeline = RunPipeline(params_path=params_path, input_data_path=input_data_path)
     df, params = run_pipeline.load_data_and_params()
 
-    features = df.drop(columns=params['columns_to_remove']).columns.to_list()
+    features = df.columns.to_list()
+
+    # choose the number of feature from the feature selection method
+    K_value = params['fs_params']['K']
+    max_features_value = params['fs_params']['max_features']
+    fs_method_1_value = params['fs_params']['fs_method_1']
+    if fs_method_1_value == 'mrmr':
+        n = K_value
+    elif fs_method_1_value == 'genetic_selection':
+        n = max_features_value
 
     results = []
-    n = 10
+
+    def run_and_return_pipeline(run_pipeline):
+        """
+        This function runs the pipeline and returns it without saving the evaluation results.
+        """
+
+        # Load data and parameters
+        df, params = run_pipeline.load_data_and_params()
+
+        # Create Preprocessing object with necessary parameters
+        preprocessor = Preprocessing(run_type='train', preprocessing_operations=[], df=df)
+
+        # Create X and y
+        X, y = preprocessor.create_x_y()
+
+        # Additional preprocessing
+        X = preprocessor.remove_nan_columns(X)
+        X = preprocessor.remove_constant_columns(X)
+
+        X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=params['test_size'],
+                                                                    random_state=params['seed'])
+        X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=params['val_size'],
+                                                          random_state=params['seed'])
+
+        pipe = Pipeline(steps=[
+            ('Imputation', imputation.Imputer(categorical_features=run_pipeline_instance.categorical_features,
+                                              numerical_features=run_pipeline_instance.numerical_features)),
+            ('Encoding', encoding.Encoder(encoder_name=params['encoder_name'], features=features)),
+            ('Scaling', scaling.Scaler(scaler_name=params['scaler_name'])),
+            ('Features Selection', features_selection.FeaturesSelection(**params['fs_params'])),
+            ('Modeling',
+             modeling.Model(model_name=params['model_name'], val_size=params['val_size'], seed=params['seed'],
+                            hyper_params_dict=params['hyper_params_dict']))])
+
+        pipe.fit(X_train_val, y_train_val)
+        return pipe
 
     for i in tqdm(range(1, n + 1)):
         current_features = features[:i]
@@ -25,10 +77,10 @@ def run_pipeline_and_evaluate(params_path, input_data_path):
                                                           test_size=params['val_size'], random_state=params['seed'])
 
         # Run the pipeline and get the fitted pipeline
-        run_pipeline.run()
-        preds_train = run_pipeline.pipe.predict(X_train)
-        preds_val = run_pipeline.pipe.predict(X_val)
-        preds_test = run_pipeline.pipe.predict(X_test)
+        pipe = run_and_return_pipeline(run_pipeline)
+        preds_train = pipe.predict(X_train)
+        preds_val = pipe.predict(X_val)
+        preds_test = pipe.predict(X_test)
 
         if params['model_type'] == 'classification':
             metrics_func = f1_score
@@ -37,11 +89,15 @@ def run_pipeline_and_evaluate(params_path, input_data_path):
 
         for preds, y, data_set in zip([preds_train, preds_val, preds_test], [y_train, y_val, y_test],
                                       ['train', 'val', 'test']):
-            metrics = {'score': metrics_func(y, preds), 'number_of_features': len(current_features),
-                       'data_set': data_set}
+            metrics = {
+                'score': metrics_func(y, preds),
+                'number_of_features': len(current_features),
+                'data_set': data_set,
+                'feature_selection_method': fs_method_1_value  # Adding the feature selection method to the metrics
+            }
             results.append(metrics)
 
-    pd.DataFrame(results).to_csv('datasets_analysis.csv', index=False)
+    pd.DataFrame(results).to_csv('/Users/gilayache/PycharmProjects/Final-project-feature-selection-in-gene-expression/src/evaluation/src/datasets_analysis.csv', index=False)
 
 
 if __name__ == '__main__':
