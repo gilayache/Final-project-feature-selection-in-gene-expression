@@ -1,5 +1,4 @@
 from sklearn.metrics import f1_score, mean_squared_error
-from src.Preprocessing.preprocesing import Preprocessing
 from pipe_v2 import RunPipeline
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
@@ -11,6 +10,7 @@ import src.Preprocessing.imputation as imputation
 import src.Preprocessing.scaling as scaling
 import src.feature_selection.features_selection as features_selection
 import src.models.modeling as modeling
+from src.Preprocessing.preprocesing import Preprocessing
 
 
 def run_pipeline_and_evaluate(params_path, input_data_path):
@@ -30,23 +30,19 @@ def run_pipeline_and_evaluate(params_path, input_data_path):
 
     results = []
 
-    def run_and_return_pipeline(run_pipeline):
-        """
-        This function runs the pipeline and returns it without saving the evaluation results.
-        """
+    def run_and_return_pipeline(df_sub, run_pipeline, params):
+        preprocess = Preprocessing(params['run_type'], params['preprocessing_operations'], df_sub)
 
-        # Load data and parameters
-        df, params = run_pipeline.load_data_and_params()
-
-        # Create Preprocessing object with necessary parameters
-        preprocessor = Preprocessing(run_type='train', preprocessing_operations=[], df=df)
-
-        # Create X and y
-        X, y = preprocessor.create_x_y()
-
-        # Additional preprocessing
-        X = preprocessor.remove_nan_columns(X)
-        X = preprocessor.remove_constant_columns(X)
+        for operation in preprocess.preprocessing_operations:
+            if operation in preprocess.list_of_methods:
+                if operation == 'remove_constant_columns':
+                    df_sub = preprocess.remove_constant_columns(df_sub)
+                elif operation == 'remove_nan_columns':
+                    df_sub = preprocess.remove_nan_columns(df_sub)
+                elif operation == 'create_x_y':
+                    X, y = preprocess.create_x_y()
+                else:
+                    print(f"{operation} is not a defined preprocessing operation.")
 
         X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=params['test_size'],
                                                                     random_state=params['seed'])
@@ -54,9 +50,9 @@ def run_pipeline_and_evaluate(params_path, input_data_path):
                                                           random_state=params['seed'])
 
         pipe = Pipeline(steps=[
-            ('Imputation', imputation.Imputer(categorical_features=run_pipeline_instance.categorical_features,
-                                              numerical_features=run_pipeline_instance.numerical_features)),
-            ('Encoding', encoding.Encoder(encoder_name=params['encoder_name'], features=features)),
+            ('Imputation', imputation.Imputer(categorical_features=run_pipeline.categorical_features,
+                                              numerical_features=run_pipeline.numerical_features)),
+            ('Encoding', encoding.Encoder(encoder_name=params['encoder_name'], features=run_pipeline.features)),
             ('Scaling', scaling.Scaler(scaler_name=params['scaler_name'])),
             ('Features Selection', features_selection.FeaturesSelection(**params['fs_params'])),
             ('Modeling',
@@ -77,7 +73,7 @@ def run_pipeline_and_evaluate(params_path, input_data_path):
                                                           test_size=params['val_size'], random_state=params['seed'])
 
         # Run the pipeline and get the fitted pipeline
-        pipe = run_and_return_pipeline(run_pipeline)
+        pipe = run_and_return_pipeline(df_sub, run_pipeline, params)
         preds_train = pipe.predict(X_train)
         preds_val = pipe.predict(X_val)
         preds_test = pipe.predict(X_test)
@@ -98,6 +94,58 @@ def run_pipeline_and_evaluate(params_path, input_data_path):
             results.append(metrics)
 
     pd.DataFrame(results).to_csv('/Users/gilayache/PycharmProjects/Final-project-feature-selection-in-gene-expression/src/evaluation/src/datasets_analysis.csv', index=False)
+import pandas as pd
+
+class Preprocessing:
+    """
+    class for preprocessing methods
+    """
+    def __init__(self, run_type: str, preprocessing_operations: list, df: pd.DataFrame):
+        self.run_type = run_type
+        self.list_of_methods = ['remove_constant_columns', 'remove_nan_columns', 'create_x_y']
+        self.constant_cols = []
+        self.cols_with_nan = []
+        self.features = []
+        self.numeric_features = []
+        self.categorical_features = []
+        self.preprocessing_operations = preprocessing_operations
+        self.df = df
+        self.columns_to_remove = []  # Define the attribute here
+        self.target_col = 'LumA_target'  # Define the attribute here, replace 'LumA_target' with your target column name
+
+
+    def remove_constant_columns(self, X):
+        """
+        remove constant columns from the given X
+        """
+        if self.run_type == 'train':
+            self.constant_cols = X.loc[:, X.apply(pd.Series.nunique) == 1].columns.to_list()
+
+        X.drop(columns=self.constant_cols, inplace=True)
+
+        return X
+
+    def remove_nan_columns(self, X):
+        """
+        remove columns that contain only nan values from the given df
+        """
+        if self.run_type == 'train':
+            self.cols_with_nan = [col for col in X.columns if X[col].isna().all()]
+
+        X.drop(columns=self.cols_with_nan, inplace=True)
+
+        return X
+
+    def create_x_y(self):
+        """
+        Separate the input dataframe into features (X) and target (y)
+        """
+        _orig_features = self.df.columns.drop(self.columns_to_remove).to_list()
+
+        X = self.df[_orig_features]
+        y = self.df[self.target_col]
+
+        return X, y
 
 
 if __name__ == '__main__':
