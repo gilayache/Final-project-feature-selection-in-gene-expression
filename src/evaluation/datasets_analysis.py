@@ -18,8 +18,8 @@ if __name__ == "__main__":
     run_pipeline = RunPipeline(params_path=params_path, input_data_path=input_data_path)
     df, params = run_pipeline.load_data_and_params()
 
-    run_type = params['run_type']  # replace with your actual run_type
-    preprocessing_operations = params['preprocessing_operations']  # replace with your actual preprocessing_operations
+    run_type = params['run_type']
+    preprocessing_operations = params['preprocessing_operations']
 
     # Initialize the Preprocessing object
     preprocessing_obj = preprocesing.Preprocessing(run_type, preprocessing_operations, df)
