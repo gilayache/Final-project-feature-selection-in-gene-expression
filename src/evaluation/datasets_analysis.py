@@ -21,13 +21,18 @@ if __name__ == "__main__":
     run_type = params['run_type']  # replace with your actual run_type
     preprocessing_operations = params['preprocessing_operations']  # replace with your actual preprocessing_operations
 
+    # Initialize the Preprocessing object
+    preprocessing_obj = preprocesing.Preprocessing(run_type, preprocessing_operations, df)
 
-    preprocessing = preprocesing.Preprocessing(run_type, preprocessing_operations,
-                                                   df)
+    # Define the columns_to_remove and target_col attributes
+    preprocessing_obj.columns_to_remove = params['columns_to_remove']
+    preprocessing_obj.target_col = params['target_col']
 
-    X, _ = preprocesing.Preprocessing.create_x_y(run_pipeline)
-    X = preprocesing.Preprocessing.remove_nan_columns(run_pipeline, X)
-    X = preprocesing.Preprocessing.remove_constant_columns(run_pipeline, X)
+    # Apply the functions
+    X, _ = preprocessing_obj.create_x_y()
+    X = preprocessing_obj.remove_nan_columns(X)
+    X = preprocessing_obj.remove_constant_columns(X)
+
     features = X.columns.to_list()
 
     # choose the number of feature based on the feature selection method
