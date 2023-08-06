@@ -8,8 +8,8 @@ from pipe_v2 import RunPipeline
 
 def run_and_return_pipeline(df, run_pipeline, params):
     run_pipeline.df = df
-    run_pipeline.run()
-    return run_pipeline.pipe
+    pipe = run_pipeline.run()
+    return pipe
 
 if __name__ == "__main__":
     results = []
@@ -56,6 +56,8 @@ if __name__ == "__main__":
 
         # Run the pipeline and get the fitted pipeline
         pipe = run_and_return_pipeline(df_sub, run_pipeline, params)
+        print(pipe)
+
         preds_train = pipe.predict(X_train)
         preds_val = pipe.predict(X_val)
         preds_test = pipe.predict(X_test)
