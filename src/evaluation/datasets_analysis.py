@@ -1,15 +1,24 @@
 import pandas as pd
 from sklearn.metrics import f1_score, mean_squared_error
 from tqdm import tqdm
+
 from sklearn.model_selection import train_test_split
+import pandas as pd
+
+import src.Preprocessing.encoding as encoding
+import src.Preprocessing.imputation as imputation
 import src.Preprocessing.preprocesing as preprocesing
+import src.Preprocessing.scaling as scaling
+import src.feature_selection.features_selection as features_selection
+import src.models.modeling as modeling
+from sklearn.pipeline import Pipeline
 
 from pipe_v2 import RunPipeline
 
-def run_and_return_pipeline(df, run_pipeline, params):
-    run_pipeline.df = df
-    pipe = run_pipeline.run()
-    return pipe
+# def run_and_return_pipeline(df, run_pipeline, params):
+#     run_pipeline.df = df
+#     pipe = run_pipeline.run()
+#     return pipe
 
 if __name__ == "__main__":
     results = []
@@ -55,8 +64,20 @@ if __name__ == "__main__":
                                                           test_size=params['val_size'], random_state=params['seed'])
 
         # Run the pipeline and get the fitted pipeline
-        pipe = run_and_return_pipeline(df_sub, run_pipeline, params)
-        print(pipe)
+        features = X_train.columns.to_list()
+        numerical_features = X_train.select_dtypes("number").columns
+        categorical_features = X_train.select_dtypes("object").columns
+
+        pipe = Pipeline(steps=[
+            ('Imputation', imputation.Imputer(categorical_features=categorical_features,
+                                              numerical_features=numerical_features)),
+            ('Encoding', encoding.Encoder(encoder_name=encoder_name, features=features)),
+            ('Scaling', scaling.Scaler(scaler_name=scaler_name)),
+            ('Features Selection', features_selection.FeaturesSelection(**self.fs_params)),
+            ('Modeling', modeling.Model(model_name=model_name, val_size=param['val_size'], seed=param['seed'],
+                                        hyper_params_dict=param['hyper_params_dict']
+                                        ))])
+        pipe.fit(X_train, y_train)
 
         preds_train = pipe.predict(X_train)
         preds_val = pipe.predict(X_val)
