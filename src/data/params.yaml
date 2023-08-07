@@ -1,10 +1,10 @@
-model_type: 'classification'
-model_name: 'LogisticRegression'
+model_type: 'regression'
+model_name: 'LinearRegression'
 columns_to_remove : ["samplename","ER","PAM50","time","event","Lympho","cluster2","LumA_target"] # do not change this one for this dataset.
 seed: 42
 test_size: 0.3
 val_size: 0.5
-target_col: 'LumA_target' # Lympho ER or LumA_target
+target_col: 'Lympho' # Lympho ER or LumA_target
 output_path: None
 run_type: 'train'
 n_jobs: -1 # for modeling (baseline)

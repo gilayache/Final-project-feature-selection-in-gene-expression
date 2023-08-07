@@ -59,8 +59,12 @@ class RunPipeline:
             X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp,
                                                               test_size=params['val_size'], random_state=params['seed'])
 
-            model = LogisticRegression()
+            if params['model_type'] == 'classification':
+                model = LogisticRegression()
+            elif params['model_type'] == 'regression':
+                model = LinearRegression()
             model.fit(X_train, y_train)
+
 
             preds_train = model.predict(X_train)
             preds_val = model.predict(X_val)
@@ -81,7 +85,7 @@ class RunPipeline:
                 }
                 results.append(metrics)
 
-            pd.DataFrame(results).to_csv('datasets_analysis_logistic_regression.csv', index=False)
+            pd.DataFrame(results).to_csv('datasets_analysis_linear_regression.csv', index=False)
 
     def load_data_and_params(self):
 
