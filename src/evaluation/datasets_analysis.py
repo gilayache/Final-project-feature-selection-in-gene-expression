@@ -1,101 +1,100 @@
-import pandas as pd
-from sklearn.metrics import f1_score, mean_squared_error
-from tqdm import tqdm
-
 from sklearn.model_selection import train_test_split
-import pandas as pd
-
-import src.Preprocessing.encoding as encoding
-import src.Preprocessing.imputation as imputation
-import src.Preprocessing.preprocesing as preprocesing
-import src.Preprocessing.scaling as scaling
-import src.feature_selection.features_selection as features_selection
-import src.models.modeling as modeling
 from sklearn.pipeline import Pipeline
+import pandas as pd
+from sklearn.linear_model import LogisticRegression, LinearRegression
+import src.Preprocessing.preprocesing as preprocesing
 
-from pipe_v2 import RunPipeline
+from sklearn.metrics import mean_squared_error,f1_score
+from tqdm import tqdm
+from src import Utils
 
-# def run_and_return_pipeline(df, run_pipeline, params):
-#     run_pipeline.df = df
-#     pipe = run_pipeline.run()
-#     return pipe
+class RunPipeline:
 
-if __name__ == "__main__":
-    results = []
-    params_path = '../../src/data/params.yaml'
-    input_data_path = '../../data/processed/merged_dataset.csv'
-    run_pipeline = RunPipeline(params_path=params_path, input_data_path=input_data_path)
-    df, params = run_pipeline.load_data_and_params()
+    def __init__(self, input_data_path, params_path):
+        self.input_path = input_data_path or '../../data/processed/merged_dataset.csv'
+        self.df = pd.DataFrame()
+        self.params_path = params_path
 
-    run_type = params['run_type']
-    preprocessing_operations = params['preprocessing_operations']
+    def run(self):
+        """
+        Runs the pipeline
+        """
+        self.df, params = self.load_data_and_params()
+        X, y = preprocesing.Preprocessing.create_x_y(self)
+        X = preprocesing.Preprocessing.remove_nan_columns(self, X)
+        X = preprocesing.Preprocessing.remove_constant_columns(self, X)
 
-    # Initialize the Preprocessing object
-    preprocessing_obj = preprocesing.Preprocessing(run_type, preprocessing_operations, df)
+        # Split the data into train+validation and test sets
+        X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=self.test_size,
+                                                                    random_state=self.seed)
 
-    # Define the columns_to_remove and target_col attributes
-    preprocessing_obj.columns_to_remove = params['columns_to_remove']
-    preprocessing_obj.target_col = params['target_col']
+        # Further split train+validation into separate train and validation sets
+        X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=self.val_size,
+                                                          random_state=self.seed)
 
-    # Apply the functions
-    X, _ = preprocessing_obj.create_x_y()
-    X = preprocessing_obj.remove_nan_columns(X)
-    X = preprocessing_obj.remove_constant_columns(X)
+        y_train, y_val, y_test = y_train.values.reshape(-1, 1), y_val.values.reshape(-1, 1), y_test.values.reshape(-1,
+                                                                                                                   1)
+        self.features = X_train.columns.to_list()
+        self.numerical_features = X_train.select_dtypes("number").columns
+        self.categorical_features = X_train.select_dtypes("object").columns
 
-    features = X.columns.to_list()
+        K_value = params['fs_params']['K']
+        max_features_value = params['fs_params']['max_features']
+        fs_method_1_value = params['fs_params']['fs_method_1']
+        model_type = params['model_type']
 
-    # choose the number of feature based on the feature selection method
-    K_value = params['fs_params']['K']
-    max_features_value = params['fs_params']['max_features']
-    fs_method_1_value = params['fs_params']['fs_method_1']
-    if fs_method_1_value == 'mrmr':
-        n = K_value
-    elif fs_method_1_value == 'genetic_selection':
-        n = max_features_value
+        if fs_method_1_value == 'mrmr':
+            n = K_value
+        elif fs_method_1_value == 'genetic_selection':
+            n = max_features_value
 
-    for i in tqdm(range(1, n + 1)):
-        current_features = features[:i]
-        df_sub = df[current_features + [params['target_col']]]
+        results = []
+        for i in tqdm(range(1, n + 1)):
+            current_features = self.features[:i]
+            df_sub = self.df[current_features + [params['target_col']]]
 
-        X_temp, X_test, y_temp, y_test = train_test_split(df_sub[current_features], df_sub[params['target_col']],
-                                                          test_size=params['test_size'], random_state=params['seed'])
+            X_temp, X_test, y_temp, y_test = train_test_split(df_sub[current_features], df_sub[params['target_col']],
+                                                              test_size=params['test_size'], random_state=params['seed'])
 
-        X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp,
-                                                          test_size=params['val_size'], random_state=params['seed'])
+            X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp,
+                                                              test_size=params['val_size'], random_state=params['seed'])
 
-        # Run the pipeline and get the fitted pipeline
-        features = X_train.columns.to_list()
-        numerical_features = X_train.select_dtypes("number").columns
-        categorical_features = X_train.select_dtypes("object").columns
+            model = LogisticRegression()
+            model.fit(X_train, y_train)
 
-        pipe = Pipeline(steps=[
-            ('Imputation', imputation.Imputer(categorical_features=categorical_features,
-                                              numerical_features=numerical_features)),
-            ('Encoding', encoding.Encoder(encoder_name=encoder_name, features=features)),
-            ('Scaling', scaling.Scaler(scaler_name=scaler_name)),
-            ('Features Selection', features_selection.FeaturesSelection(**self.fs_params)),
-            ('Modeling', modeling.Model(model_name=model_name, val_size=param['val_size'], seed=param['seed'],
-                                        hyper_params_dict=param['hyper_params_dict']
-                                        ))])
-        pipe.fit(X_train, y_train)
+            preds_train = model.predict(X_train)
+            preds_val = model.predict(X_val)
+            preds_test = model.predict(X_test)
 
-        preds_train = pipe.predict(X_train)
-        preds_val = pipe.predict(X_val)
-        preds_test = pipe.predict(X_test)
+            if params['model_type'] == 'classification':
+                metrics_func = f1_score
+            elif params['model_type'] == 'regression':
+                metrics_func = mean_squared_error
 
-        if params['model_type'] == 'classification':
-            metrics_func = f1_score
-        elif params['model_type'] == 'regression':
-            metrics_func = mean_squared_error
+            for preds, y, data_set in zip([preds_train, preds_val, preds_test], [y_train, y_val, y_test],
+                                          ['train', 'val', 'test']):
+                metrics = {
+                    'score': metrics_func(y, preds),
+                    'number_of_features': len(current_features),
+                    'data_set': data_set,
+                    'model_type': model_type
+                }
+                results.append(metrics)
 
-        for preds, y, data_set in zip([preds_train, preds_val, preds_test], [y_train, y_val, y_test],
-                                      ['train', 'val', 'test']):
-            metrics = {
-                'score': metrics_func(y, preds),
-                'number_of_features': len(current_features),
-                'data_set': data_set,
-                'feature_selection_method': fs_method_1_value
-            }
-            results.append(metrics)
+            pd.DataFrame(results).to_csv('datasets_analysis_logistic_regression.csv', index=False)
 
-    pd.DataFrame(results).to_csv('src/evaluation/src/datasets_analysis.csv', index=False)
+    def load_data_and_params(self):
+
+        df = Utils.load_data(self.input_path)
+        params = Utils.load_params(self.params_path)
+
+        for key, value in params.items():
+            setattr(self, key, value)
+
+        return df, params
+
+if __name__ == '__main__':
+    run_pipeline = RunPipeline(params_path='../../src/data/params.yaml',
+                               input_data_path='../../data/processed/merged_dataset.csv'
+                               )
+    run_pipeline.run()
