@@ -4,7 +4,7 @@ import yaml
 import numpy as np
 
 # Load data
-df = pd.read_csv('datasets_analysis_linear_regression.csv')
+
 
 # Load parameters
 with open('../../src/data/params.yaml', 'r') as f:
@@ -14,9 +14,13 @@ with open('../../src/data/params.yaml', 'r') as f:
 if params['model_type'] == 'classification':
     title = 'F1 Score vs Number of Features for classification problem.'
     score = "F1"
+    df = pd.read_csv('datasets_analysis_logistic_regression.csv')
 elif params['model_type'] == 'regression':
     title = 'MSE vs Number of Features for regression problem.'
     score = "MSE"
+    df = pd.read_csv('datasets_analysis_linear_regression.csv')
+
+
 # Filter data
 df_train = df[df['data_set'] == 'train']
 df_val = df[df['data_set'] == 'val']
