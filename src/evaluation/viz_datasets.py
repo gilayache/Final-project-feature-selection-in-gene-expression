@@ -3,9 +3,6 @@ import plotly.graph_objs as go
 import yaml
 import numpy as np
 
-# Load data
-
-
 # Load parameters
 with open('../../src/data/params.yaml', 'r') as f:
     params = yaml.safe_load(f)
@@ -14,10 +11,12 @@ with open('../../src/data/params.yaml', 'r') as f:
 if params['model_type'] == 'classification':
     title = 'F1 Score vs Number of Features for classification problem.'
     score = "F1"
+    # load the data
     df = pd.read_csv('datasets_analysis_logistic_regression.csv')
 elif params['model_type'] == 'regression':
     title = 'MSE vs Number of Features for regression problem.'
     score = "MSE"
+    # load the data
     df = pd.read_csv('datasets_analysis_linear_regression.csv')
 
 
