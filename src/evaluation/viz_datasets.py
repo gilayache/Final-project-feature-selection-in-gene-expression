@@ -15,7 +15,7 @@ if params['model_type'] == 'classification':
 elif params['model_type'] == 'regression':
     title = 'MSE vs Number of Features for regression problem,'
     score = "MSE"
-    df = pd.read_csv('datasets_analysis_linear_regression.csv')
+    df = pd.read_csv('datasets_analysis_linear_regression_mrmr.csv')
 
 # Adding method to title
 if params['fs_params']['fs_method_1'] == 'mrmr':
@@ -91,9 +91,10 @@ layout = go.Layout(
     title=title,
     xaxis=dict(title='Number of Features'),
     yaxis=dict(
-        title=f'{score}',
-        range=[np.percentile(pd.concat([df["feature_selection_score"], df["random_selection_score"]]), 2),
-               np.percentile(pd.concat([df["feature_selection_score"], df["random_selection_score"]]), 98)])
+        title=f'{score}'
+        # range=[np.percentile(pd.concat([df["feature_selection_score"], df["random_selection_score"]]), 2),
+        #        np.percentile(pd.concat([df["feature_selection_score"], df["random_selection_score"]]), 98)]
+        )
 )
 
 # Create plot
