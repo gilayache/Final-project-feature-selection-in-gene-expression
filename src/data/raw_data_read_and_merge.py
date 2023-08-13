@@ -27,5 +27,7 @@ merged_dataset = SCANB.merge(info_SCANB, left_on='samplename', right_on='samplen
 assert info_SCANB.shape[1] + SCANB.shape[1] == merged_dataset.shape[1] + 1, logging.info(
         "number of column is not correct"
     )
+# Create the LumA column for classification
+merged_dataset['LumA_target'] = merged_dataset['PAM50'].apply(lambda x: 1 if x == 'LumA' else 0)
 
 merged_dataset.to_csv(merged_dataset_path,index=False)
