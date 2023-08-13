@@ -1,12 +1,18 @@
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 import pandas as pd
-from sklearn.linear_model import LogisticRegression, LinearRegression
+
+import src.Preprocessing.encoding as encoding
+import src.Preprocessing.imputation as imputation
 import src.Preprocessing.preprocesing as preprocesing
+import src.Preprocessing.scaling as scaling
+import src.feature_selection.features_selection as features_selection
+import src.models.modeling as modeling
 
 from sklearn.metrics import mean_squared_error,f1_score
 from tqdm import tqdm
 from src import Utils
+import random
 
 class RunPipeline:
 
@@ -48,37 +54,60 @@ class RunPipeline:
         elif fs_method_1_value == 'genetic_selection':
             n = max_features_value
 
+        shuffled_features = self.features.copy()
+        random.shuffle(shuffled_features)
+
         results = []
         for i in tqdm(range(1, n + 1)):
+            if K_value:
+                self.fs_params['K'] = i
+            elif max_features_value:
+                self.fs_params['max_features'] = i
+
             current_features = self.features[:i]
-            df_sub = self.df[current_features + [params['target_col']]]
+            X_train_filtered = X_train[current_features]
+            X_val_filtered = X_val[current_features]
+            X_test_filtered = X_test[current_features]
 
-            X_temp, X_test, y_temp, y_test = train_test_split(df_sub[current_features], df_sub[params['target_col']],
-                                                              test_size=params['test_size'], random_state=params['seed'])
+            pipe = Pipeline(steps=[
+                ('Features Selection', features_selection.FeaturesSelection(**self.fs_params)),
+                ('Modeling', modeling.Model(model_name=self.model_name, val_size=self.val_size, seed=self.seed,
+                                            hyper_params_dict=self.hyper_params_dict))
+            ])
 
-            X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp,
-                                                              test_size=params['val_size'], random_state=params['seed'])
+            # fitting the pipeline using the filtered X_train
+            pipe.fit(X_train_filtered, y_train)
+            preds_train = pipe.predict(X_train_filtered)
+            preds_val = pipe.predict(X_val_filtered)
+            preds_test = pipe.predict(X_test_filtered)
 
-            if params['model_type'] == 'classification':
-                model = LogisticRegression()
-            elif params['model_type'] == 'regression':
-                model = LinearRegression()
-            model.fit(X_train, y_train)
+            # so we wont select a random feature twice
+            random_features = shuffled_features[:i]
+            X_train_random = X_train[random_features]
+            X_val_random = X_val[random_features]
+            X_test_random = X_test[random_features]
 
-
-            preds_train = model.predict(X_train)
-            preds_val = model.predict(X_val)
-            preds_test = model.predict(X_test)
+            pipe_random = Pipeline(steps=[
+                ('Modeling', modeling.Model(model_name=self.model_name, val_size=self.val_size, seed=self.seed,
+                                            hyper_params_dict=self.hyper_params_dict))
+            ])
+            pipe_random.fit(X_train_random, y_train)
+            preds_train_random = pipe_random.predict(X_train_random)
+            preds_val_random = pipe_random.predict(X_val_random)
+            preds_test_random = pipe_random.predict(X_test_random)
 
             if params['model_type'] == 'classification':
                 metrics_func = f1_score
             elif params['model_type'] == 'regression':
                 metrics_func = mean_squared_error
 
-            for preds, y, data_set in zip([preds_train, preds_val, preds_test], [y_train, y_val, y_test],
-                                          ['train', 'val', 'test']):
+            for preds_fs, preds_random, y, data_set in zip([preds_train, preds_val, preds_test],
+                                                           [preds_train_random, preds_val_random, preds_test_random],
+                                                           [y_train, y_val, y_test],
+                                                           ['train', 'val', 'test']):
                 metrics = {
-                    'score': metrics_func(y, preds),
+                    'feature_selection_score': metrics_func(y, preds_fs),
+                    'random_selection_score': metrics_func(y, preds_random),
                     'number_of_features': len(current_features),
                     'data_set': data_set,
                     'model_type': model_type
