@@ -7,15 +7,18 @@ import numpy as np
 with open('../../src/data/params.yaml', 'r') as f:
     params = yaml.safe_load(f)
 
+analysis_data_logistic = 'datasets_analysis_logistic_regression_mrmr.csv'
+analysis_data_linear = 'datasets_analysis_linear_regression_mrmr.csv'
+
 # Check model type and modify title
 if params['model_type'] == 'classification':
     title = 'F1 Score vs Number of Features for classification problem,'
     score = "F1"
-    df = pd.read_csv('datasets_analysis_logistic_regression_mrmr.csv')
+    df = pd.read_csv(analysis_data_logistic)
 elif params['model_type'] == 'regression':
     title = 'MSE vs Number of Features for regression problem,'
     score = "MSE"
-    df = pd.read_csv('datasets_analysis_linear_regression_mrmr.csv')
+    df = pd.read_csv(analysis_data_linear)
 
 # Adding method to title
 if params['fs_params']['fs_method_1'] == 'mrmr':
