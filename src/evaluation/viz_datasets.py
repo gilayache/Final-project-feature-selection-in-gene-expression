@@ -11,7 +11,7 @@ with open('../../src/data/params.yaml', 'r') as f:
 if params['model_type'] == 'classification':
     title = 'F1 Score vs Number of Features for classification problem,'
     score = "F1"
-    df = pd.read_csv('datasets_analysis_logistic_regression.csv')
+    df = pd.read_csv('datasets_analysis_logistic_regression_mrmr.csv')
 elif params['model_type'] == 'regression':
     title = 'MSE vs Number of Features for regression problem,'
     score = "MSE"
