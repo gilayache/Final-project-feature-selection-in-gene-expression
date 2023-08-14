@@ -1,18 +1,18 @@
-model_type: 'regression'
-model_name: 'LinearRegression'
+model_type: 'classification'
+model_name: 'LogisticRegression'
 columns_to_remove : ["samplename","ER","PAM50","time","event","Lympho","cluster2","LumA_target"] # do not change this one for this dataset.
 seed: 42
 test_size: 0.3
 val_size: 0.5
-target_col: 'Lympho' # Lympho ER or LumA_target
+target_col: 'ER' # Lympho ER or LumA_target
 output_path: None
 run_type: 'train'
 n_jobs: -1 # for modeling (baseline)
 fit_intercept: True # for modeling (baseline)
 fs_params:
-  K: 9259 # for mrmr
+  K: 300 # for mrmr
   fs_method_1: "mrmr" # "genetic_selection" or "mrmr"
-  model_type: 'regression'
+  model_type: 'classification'
 #  seed: 42
   alpha: 0.1 # for elastic_net
   l1_ratio: 0.5 # for elastic_net
