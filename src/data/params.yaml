@@ -1,5 +1,5 @@
 model_type: 'regression'
-model_name: 'LinearRegression'
+model_name: 'linearRegression'
 columns_to_remove : ["samplename","ER","PAM50","time","event","Lympho","cluster2","LumA_target"] # do not change this one for this dataset.
 seed: 42
 test_size: 0.3
