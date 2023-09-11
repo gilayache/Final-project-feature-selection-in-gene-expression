@@ -64,10 +64,10 @@ trace_test_fs = go.Scatter(
     name='Test FS'
 )
 
-# Create traces for random_selection_score
+# Create traces for random_selection_score_list
 trace_train_random = go.Scatter(
     x=df_train['number_of_features'],
-    y=df_train["random_selection_score"],
+    y=df_train["random_selection_score_list"],
     mode='lines',
     line=dict(color=color_map['train']),
     name='Train Random'
@@ -75,7 +75,7 @@ trace_train_random = go.Scatter(
 
 trace_val_random = go.Scatter(
     x=df_val['number_of_features'],
-    y=df_val["random_selection_score"],
+    y=df_val["random_selection_score_list"],
     mode='lines',
     line=dict(color=color_map['val']),
     name='Val Random'
@@ -83,7 +83,7 @@ trace_val_random = go.Scatter(
 
 trace_test_random = go.Scatter(
     x=df_test['number_of_features'],
-    y=df_test["random_selection_score"],
+    y=df_test["random_selection_score_list"],
     mode='lines',
     line=dict(color=color_map['test']),
     name='Test Random'
