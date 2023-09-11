@@ -60,6 +60,9 @@ class Model:
     def apply_hyper_param(self, X, y):
         """
         """
+        model = None  # Initialize model with a default value of None
+        hyper_params_dict = dict()
+
         # Selecting hyperparameters based on the model
         if self.model_name == 'LogisticRegression':
             hyper_params_dict = {key: self.hyper_params_dict[key] for key in ['C', 'penalty', 'solver']}
@@ -67,6 +70,8 @@ class Model:
         elif self.model_name == 'LinearRegression':
             hyper_params_dict = {key: self.hyper_params_dict[key] for key in ['fit_intercept', 'n_jobs']}
             model = LinearRegression()
+        else:
+            raise ValueError(f"Unsupported model_name: {self.model_name}. Please use 'LogisticRegression' or 'LinearRegression'.")
 
         clf = RandomizedSearchCV(model, hyper_params_dict, random_state=0)
         print('start hyper params with RandomizedSearchCV')
