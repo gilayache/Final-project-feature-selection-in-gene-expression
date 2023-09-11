@@ -47,6 +47,11 @@ df_train.loc[:, "median_random"] = df_train["random_selection_score_list"].apply
 df_val.loc[:, "median_random"] = df_val["random_selection_score_list"].apply(np.median)
 df_test.loc[:, "median_random"] = df_test["random_selection_score_list"].apply(np.median)
 
+df_train['std_random'] = df_train["random_selection_score_list"].apply(np.std)
+df_val['std_random'] = df_val["random_selection_score_list"].apply(np.std)
+df_test['std_random'] = df_test["random_selection_score_list"].apply(np.std)
+
+
 # Create traces for feature_selection_score
 trace_train_fs = go.Scatter(
     x=df_train['number_of_features'],
