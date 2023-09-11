@@ -1,5 +1,5 @@
 model_type: 'regression'
-model_name: 'linearRegression'
+model_name: 'LinearRegression'
 columns_to_remove : ["samplename","ER","PAM50","time","event","Lympho","cluster2","LumA_target"] # do not change this one for this dataset.
 seed: 42
 test_size: 0.3
@@ -10,7 +10,7 @@ run_type: 'train'
 n_jobs: -1 # for modeling (baseline)
 fit_intercept: True # for modeling (baseline)
 fs_params:
-  K: 10  # for mrmr
+  K: 300  # for mrmr
   fs_method_1: "mrmr" # "genetic_selection" or "mrmr"
   model_type: 'regression'
 #  seed: 42
@@ -20,7 +20,7 @@ fs_params:
   # For the genetic algo
   cv: 5
   verbose: 2
-  max_features: 300
+  max_features: 2
   n_population: 100
   crossover_proba: 0.5
   mutation_proba: 0.2
