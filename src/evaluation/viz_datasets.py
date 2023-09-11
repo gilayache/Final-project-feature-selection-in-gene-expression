@@ -8,8 +8,8 @@ import plotly.io as pio
 # Load parameters
 with open('../../src/data/params.yaml', 'r') as f:
     params = yaml.safe_load(f)
-analysis_data_logistic = 'datasets_analysis_logistic_regression_genetic_selection.csv'
-analysis_data_linear = 'datasets_analysis_linear_regression_genetic_selection.csv'
+analysis_data_logistic = 'datasets_analysis_logistic_regression_mrmr.csv'
+analysis_data_linear = 'datasets_analysis_linear_regression_mrmr.csv'
 
 
 # Check model type and modify title
