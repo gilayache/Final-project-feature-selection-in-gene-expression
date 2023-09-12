@@ -123,4 +123,4 @@ layout = go.Layout(
 fig = go.Figure(data=data, layout=layout)
 
 # Write the plot to html
-pio.write_html(fig, file="linear_regression_genetic_selection.html", auto_open=True)
+pio.write_html(fig, file="linear_regression_mrmr.html", auto_open=True)
