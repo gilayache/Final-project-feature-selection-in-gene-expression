@@ -78,20 +78,28 @@ trace_test_fs = go.Scatter(
 )
 
 # Create traces for median_random
+trace_val_random = go.Scatter(
+    x=df_val['number_of_features'],
+    y=df_val["median_random"],
+    mode='lines',
+    line=dict(color=color_map['val']),
+    name='Val Random',
+    error_y=dict(
+        type='data',
+        array=0.1 * np.arcsin(df_val["std_random"]),
+        visible=True,
+        color='rgba(0, 128, 0, 0.3)',  # This is an rgba value for semi-transparent green
+        thickness=10,  # Increase the thickness
+        width=0  # Set the width of the cap at the end of the error bars to 0 to remove it
+    )
+)
+
 trace_train_random = go.Scatter(
     x=df_train['number_of_features'],
     y=df_train["median_random"],
     mode='lines',
     line=dict(color=color_map['train']),
     name='Train Random'
-)
-
-trace_val_random = go.Scatter(
-    x=df_val['number_of_features'],
-    y=df_val["median_random"],
-    mode='lines',
-    line=dict(color=color_map['val']),
-    name='Val Random'
 )
 
 trace_test_random = go.Scatter(
