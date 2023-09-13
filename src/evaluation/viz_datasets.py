@@ -83,7 +83,7 @@ trace_val_random = go.Scatter(
     y=df_val["median_random"],
     mode='lines',
     line=dict(color=color_map['val']),
-    name='Val Random',
+    name='Val Random + std',
     error_y=dict(
         type='data',
         array=0.05 * np.arcsin(df_val["std_random"]),
