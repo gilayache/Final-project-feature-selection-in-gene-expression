@@ -7,8 +7,8 @@ import plotly.io as pio
 # Load parameters
 with open('../../src/data/params.yaml', 'r') as f:
     params = yaml.safe_load(f)
-analysis_data_logistic = 'datasets_analysis_logistic_regression_mrmr.csv'
-analysis_data_linear = 'datasets_analysis_linear_regression_mrmr.csv'
+analysis_data_logistic = 'datasets_analysis_logistic_regression_genetic_selection.csv'
+analysis_data_linear = 'datasets_analysis_linear_regression_genetic_selection.csv'
 
 # Check model type and modify title
 if params['model_type'] == 'classification':
@@ -86,7 +86,7 @@ trace_val_random = go.Scatter(
     name='Val Random + std',
     error_y=dict(
         type='data',
-        array=0.05 * np.arcsin(df_val["std_random"]),
+        array=0.04 * np.arcsin(df_val["std_random"]),
         visible=True,
         color='rgba(0, 128, 0, 0.3)',  # This is an rgba value for semi-transparent green
         thickness=10,  # Increase the thickness
@@ -123,4 +123,4 @@ layout = go.Layout(
 fig = go.Figure(data=data, layout=layout)
 
 # Write the plot to html
-pio.write_html(fig, file="linear_regression_mrmr.html", auto_open=True)
+pio.write_html(fig, file="linear_regression_genetic_selection.html", auto_open=True)
