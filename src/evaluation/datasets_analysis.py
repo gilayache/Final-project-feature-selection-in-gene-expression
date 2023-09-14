@@ -123,7 +123,7 @@ class RunPipeline:
                 }
                 results.append(metrics)
 
-            pd.DataFrame(results).to_csv('datasets_analysis_logistic_regression_genetic_selection.csv', index=False)
+            pd.DataFrame(results).to_csv('datasets_analysis_logistic_regression_mrmr.csv', index=False)
 
     def load_data_and_params(self):
         df = Utils.load_data(self.input_path)
