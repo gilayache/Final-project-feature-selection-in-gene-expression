@@ -16,3 +16,4 @@ pip install -e .
 ## The flow of the pipeline
 --------
 
+![Pipeline Image](pipeline.png)
