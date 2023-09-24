@@ -1,8 +1,7 @@
 Final-project-feature-selection-in-gene-expression
 ==============================
 
-Noa Leonard and Gil Ayache 
-
+Gil Ayache and Noa Leonard
 
 ## Installation
 
@@ -11,9 +10,9 @@ cd Final-project-feature-selection-in-gene-expression
 pip install -e .
 ```
 
-
-
 ## The flow of the pipeline
+
 --------
+
 
 ![Pipeline Image](pipeline.png)
